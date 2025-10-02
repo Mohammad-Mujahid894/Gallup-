@@ -64,7 +64,7 @@
       border-radius:10px;
       border:1px solid rgba(255,255,255,0.06);
       background: rgba(255,255,255,0.02);
-      color:var(--fg);
+      color:#eaf2ff;
       min-width:220px;
     }
     .btn{
@@ -205,11 +205,6 @@
       justify-content: center;
       align-items: center;
     }
-    #dna-barcode svg {
-      background: #c0c0c0; /* Gray background like in the picture */
-      border-radius: 8px;
-      overflow: visible;
-    }
 
   </style>
 </head>
@@ -275,7 +270,7 @@ const strengths = [
   { rank:7, name:"Individualization", domain:"RELATIONSHIP", short:"You see each person's uniqueness.", tips:"Customize communication templates — some customers prefer short emails, others phone calls." },
   { rank:8, name:"Developer", domain:"RELATIONSHIP", short:"You see and grow potential in others.", tips:"Mentor a new teammate on TANDEM processes gradually." },
   { rank:9, name:"Harmony", domain:"RELATIONSHIP", short:"You look for agreement and avoid conflict.", tips:"In dispute resolution, focus on shared goals to reach a compromise." },
-  { rank:10, name:"Restorative", domain:"EXECUTING", short:"You love solving problems and fixing issues.", tips:"Perfect for exception queues — you’ll enjoy resolving partial remits and unclear checks." },
+  { rank:10, name:"Restorative", domain:"EXECUTING", short:"You love solving problems and fixing issues.", tips:"Perfect for exception queues — you'll enjoy resolving partial remits and unclear checks." },
 
   { rank:11, name:"Ideation", domain:"STRATEGIC", short:"You generate fresh, creative ideas.", tips:"Propose small automation or template ideas to reduce repetitive manual steps." },
   { rank:12, name:"Connectedness", domain:"RELATIONSHIP", short:"You see links and a larger story.", tips:"Use when mapping how payments, credit holds, and statements affect customers." },
@@ -285,7 +280,7 @@ const strengths = [
   { rank:16, name:"Discipline", domain:"EXECUTING", short:"You create structure, procedures, and routines.", tips:"Create a standard start-of-shift checklist for reviewing ACH and bank files." },
   { rank:17, name:"Futuristic", domain:"STRATEGIC", short:"You imagine exciting futures and possibilities.", tips:"Sketch a 6-month improvements roadmap for faster invoice retrievals." },
   { rank:18, name:"Significance", domain:"INFLUENCING", short:"You want to make an impact and be noticed.", tips:"Volunteer for a small cross-team project to raise visibility." },
-  { rank:19, name:"Maximizer", domain:"INFLUENCING", short:"You turn good into great, focus on strengths.", tips:"Spot colleagues’ strengths and pair them for complex exceptions." },
+  { rank:19, name:"Maximizer", domain:"INFLUENCING", short:"You turn good into great, focus on strengths.", tips:"Spot colleagues' strengths and pair them for complex exceptions." },
   { rank:20, name:"Achiever", domain:"EXECUTING", short:"You have stamina and like finishing tasks.", tips:"Use a visible daily checklist to get the satisfaction of crossing off items." },
 
   { rank:21, name:"Responsibility", domain:"EXECUTING", short:"You are reliable and keep promises.", tips:"Own a weekly folder cleanup task (invoice folder) and show consistent follow-through." },
@@ -300,7 +295,7 @@ const strengths = [
 
   { rank:30, name:"Context", domain:"STRATEGIC", short:"You look to the past to understand the present.", tips:"When something repeats, check the historical transaction trail to learn patterns." },
   { rank:31, name:"Activator", domain:"INFLUENCING", short:"You make things happen — quick to start.", tips:"Launch small process tests to speed up a manual reconciliation step." },
-  { rank:32, name:"Command", domain:"INFLUENCING", short:"You lead confidently and take charge.", tips:"Step up to drive a cross-team decision when there’s ambiguity." },
+  { rank:32, name:"Command", domain:"INFLUENCING", short:"You lead confidently and take charge.", tips:"Step up to drive a cross-team decision when there's ambiguity." },
   { rank:33, name:"Woo", domain:"INFLUENCING", short:"You win others over and start conversations easily.", tips:"Use at onboarding calls to build rapport with new vendors." },
   { rank:34, name:"Includer", domain:"RELATIONSHIP", short:"You make people feel part of a group.", tips:"Make sure quieter teammates get credit in team updates." }
 ];
@@ -378,7 +373,6 @@ function tileMouseMove(event, d){
          .html(`<strong style="display:block;margin-bottom:6px">${d.rank}. ${d.name}</strong>
                 <div style="color:var(--muted);font-size:13px">${d.short}</div>`);
   // position tooltip near pointer, with small offset
-  const [mx,my] = d3.pointer(event);
   const left = event.clientX + 12;
   const top = event.clientY + 12;
   tooltip.style('left', left + 'px').style('top', top + 'px');
@@ -401,7 +395,6 @@ function tileClick(event,d){
     <p style="margin-top:8px;font-size:13px;color:var(--muted)">Click another tile to view its notes. Use the Search to filter.</p>
   `);
   // set left border color dynamically
-  // (we set a CSS var for visibility: find the domain color)
   const domColor = domainOrder.find(x => x.key===d.domain).color;
   details.select('h2').style('color', domColor);
 }
@@ -442,96 +435,105 @@ function renderStackBar(data){
 }
 renderStackBar(strengths);
 
-/* ===== DNA Barcode Chart (added based on your picture) ===== */
+/* ===== DNA Barcode Chart - EXACTLY like the picture ===== */
 function renderDNABarcode() {
-  const svgWidth = 800; // Total width like in the picture
-  const svgHeight = 40; // Height for the bars
-  const barWidth = 4; // Width of each vertical bar
-  const gap = 1; // Small gap between bars
-
-  // Colors from the picture: repeating pattern of blues, oranges, purples, greens, etc.
+  // Based on the image: gray background, two sections with chevron connections
+  const container = d3.select('#dna-barcode');
+  
+  // Color sequence from the picture (repeating pattern)
   const colors = [
-    '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', // Left stub colors
-    '#FF00FF', '#FF0000', '#800080', '#008000', '#0000FF', '#00FFFF',
-    '#00FF00', '#FFFF00', '#FF00FF', '#FF0000', '#800080', '#008000',
-    '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF00FF', '#FF0000',
-    '#800080', '#008000', '#0000FF', '#00FFFF', '#00FF00', '#FFFF00',
-    '#FF00FF', '#FF0000', '#800080', '#008000', '#0000FF', '#00FFFF',
-    '#00FF00', '#FFFF00', '#FF00FF', '#FF0000' // Extended for length
+    '#0066cc', '#00cc66', '#00cc66', '#00cc66', // left stub - blues and greens
+    '#0066cc', '#6633cc', '#6633cc', '#0066cc', // continuing pattern
+    '#00cc66', '#ff9900', '#0066cc', '#00cc66',
+    '#ff9900', '#6633cc', '#6633cc', '#0066cc',
+    '#0066cc', '#00cc66', '#ff9900', '#ff9900',
+    '#6633cc', '#0066cc', '#00cc66', '#0066cc',
+    '#ff9900', '#6633cc', '#0066cc', '#6633cc',
+    '#00cc66', '#ff9900', '#0066cc', '#6633cc',
+    '#00cc66', '#ff9900', '#6633cc', '#0066cc',
+    '#00cc66', '#ff9900' // extended for full length
   ];
 
-  // Left stub: small section with 4 bars and a pointy end
-  const leftStubBars = 4;
-  const leftStubWidth = leftStubBars * (barWidth + gap) + 20; // Extra for pointy shape
-
-  // Main bar: longer section with many bars
-  const mainBars = 34; // Matches your 34 strengths for symbolism
-  const mainWidth = mainBars * (barWidth + gap) + 40; // Extra for pointy ends
-
-  const svg = d3.select('#dna-barcode')
-    .append('svg')
-    .attr('width', svgWidth)
-    .attr('height', svgHeight + 20) // Extra space for pointy ends
-    .attr('viewBox', `0 -10 ${svgWidth} ${svgHeight + 20}`);
-
-  // Gray background (like in picture)
-  svg.append('rect')
-    .attr('x', 0)
-    .attr('y', 0)
+  const svgWidth = 680;
+  const svgHeight = 50;
+  const barHeight = 50;
+  const barWidth = 3;
+  const barGap = 2;
+  
+  const svg = container.append('svg')
     .attr('width', svgWidth)
     .attr('height', svgHeight)
-    .attr('fill', '#c0c0c0');
+    .style('display', 'block');
 
-  // Left stub bars
-  let xPos = 20; // Start after pointy end space
-  for (let i = 0; i < leftStubBars; i++) {
+  // Create left stub section (short)
+  const leftStubX = 30;
+  const leftStubBars = 4;
+  const leftStubWidth = leftStubBars * (barWidth + barGap) + 40;
+  
+  // Left stub rounded rect with chevrons
+  const leftStubPath = `
+    M ${leftStubX},10
+    L ${leftStubX + 15},${barHeight/2}
+    L ${leftStubX},${barHeight - 10}
+    L ${leftStubX + leftStubWidth - 15},${barHeight - 10}
+    L ${leftStubX + leftStubWidth},${barHeight/2}
+    L ${leftStubX + leftStubWidth - 15},10
+    Z
+  `;
+  
+  svg.append('path')
+    .attr('d', leftStubPath)
+    .attr('fill', '#b0b0b0')
+    .attr('stroke', '#888')
+    .attr('stroke-width', 1);
+
+  // Draw bars in left stub
+  let xPos = leftStubX + 20;
+  for(let i = 0; i < leftStubBars; i++) {
     svg.append('rect')
       .attr('x', xPos)
-      .attr('y', 0)
+      .attr('y', 10)
       .attr('width', barWidth)
-      .attr('height', svgHeight)
-      .attr('fill', colors[i % colors.length]);
-    xPos += barWidth + gap;
+      .attr('height', barHeight - 20)
+      .attr('fill', colors[i]);
+    xPos += barWidth + barGap;
   }
 
-  // Gap between left stub and main bar (like in picture)
-  xPos += 10;
+  // Main section (long)
+  const mainX = leftStubX + leftStubWidth + 10;
+  const mainBars = 30;
+  const mainWidth = mainBars * (barWidth + barGap) + 40;
+  
+  const mainPath = `
+    M ${mainX},10
+    L ${mainX + 15},${barHeight/2}
+    L ${mainX},${barHeight - 10}
+    L ${mainX + mainWidth - 15},${barHeight - 10}
+    L ${mainX + mainWidth},${barHeight/2}
+    L ${mainX + mainWidth - 15},10
+    Z
+  `;
+  
+  svg.append('path')
+    .attr('d', mainPath)
+    .attr('fill', '#b0b0b0')
+    .attr('stroke', '#888')
+    .attr('stroke-width', 1);
 
-  // Main bar bars
-  for (let i = 0; i < mainBars; i++) {
+  // Draw bars in main section
+  xPos = mainX + 20;
+  for(let i = 0; i < mainBars; i++) {
     svg.append('rect')
       .attr('x', xPos)
-      .attr('y', 0)
+      .attr('y', 10)
       .attr('width', barWidth)
-      .attr('height', svgHeight)
-      .attr('fill', colors[i % colors.length]);
-    xPos += barWidth + gap;
+      .attr('height', barHeight - 20)
+      .attr('fill', colors[(i + leftStubBars) % colors.length]);
+    xPos += barWidth + barGap;
   }
-
-  // Add pointy ends (triangles) for DNA helix look
-  // Left end of left stub
-  svg.append('polygon')
-    .attr('points', `0,${svgHeight/2} 20,0 20,${svgHeight}`)
-    .attr('fill', '#c0c0c0');
-
-  // Right end of left stub
-  svg.append('polygon')
-    .attr('points', `${leftStubWidth},${svgHeight/2} ${leftStubWidth - 20},0 ${leftStubWidth - 20},${svgHeight}`)
-    .attr('fill', '#c0c0c0');
-
-  // Left end of main bar
-  const mainStart = leftStubWidth + 10;
-  svg.append('polygon')
-    .attr('points', `${mainStart},${svgHeight/2} ${mainStart + 20},0 ${mainStart + 20},${svgHeight}`)
-    .attr('fill', '#c0c0c0');
-
-  // Right end of main bar
-  svg.append('polygon')
-    .attr('points', `${svgWidth},${svgHeight/2} ${svgWidth - 20},0 ${svgWidth - 20},${svgHeight}`)
-    .attr('fill', '#c0c0c0');
 }
 
-// Render the DNA barcode on load
+// Render the DNA barcode
 renderDNABarcode();
 
 /* ===== Controls: Search, Top5, Export CSV ===== */
@@ -548,9 +550,7 @@ d3.select('#search').on('input', function(){
 });
 
 d3.select('#top5').on('click', function(){
-  // highlight top 5 tiles (ranks 1..5) and scroll to first if visible
   d3.selectAll('.tile').style('opacity', t => (t.rank <=5 ? 1 : 0.12));
-  // auto open details for rank 1
   const top = strengths.find(s => s.rank===1);
   if(top) tileClick(null, top);
 });
@@ -567,17 +567,6 @@ d3.select('#exportCSV').on('click', function(){
   URL.revokeObjectURL(url);
 });
 
-/* ===== Responsive niceties: if header overlaps, add top padding (optional) ===== */
-/* If you embed into a page with a fixed header, call:
-     document.querySelector('#app').style.paddingTop = '80px';
-   (example included in integration notes)
-*/
-
-/* If you want to re-render after editing data, call:
-     renderTiles(newData); renderStackBar(newData);
-*/
-
-/* END OF SCRIPT */
 </script>
 </body>
 </html>
