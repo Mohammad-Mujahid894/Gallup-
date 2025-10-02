@@ -21,11 +21,9 @@ body{
 header.title{display:flex; flex-direction:column; margin-bottom:16px;}
 header.title h1{margin:0; font-size:20px;}
 header.title p{margin:0; font-size:13px; color:var(--muted);}
-
 .controls{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; align-items:center;}
 .controls input[type="search"]{padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);}
 .btn{padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); color:#eaf2ff; cursor:pointer;}
-
 .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--gap);}
 @media (max-width:900px){.grid{grid-template-columns:1fr;}}
 .column{background:var(--card); padding:12px; border-radius:var(--radius); box-shadow:var(--shadow); min-height:120px; position:relative;}
@@ -41,7 +39,7 @@ header.title p{margin:0; font-size:13px; color:var(--muted);}
 .stackbar-wrap{display:flex; gap:12px; align-items:center; margin-top:12px;}
 .stack-legend{display:flex; gap:10px; font-size:13px; color:var(--muted);}
 .muted{opacity:0.3;}
-.barcode-wrap{margin-bottom:24px;}
+.bar-hover{stroke:#fff; stroke-width:2;}
 </style>
 </head>
 
@@ -52,9 +50,9 @@ header.title p{margin:0; font-size:13px; color:var(--muted);}
   <p>You lead with Relationship Building themes — grid + details built with D3.js</p>
 </header>
 
-<!-- Integrated Barcode -->
-<div class="barcode-wrap">
-<svg viewBox="0 0 500 60" width="100%" height="60" aria-hidden="true">
+<!-- Barcode SVG (unchanged) -->
+<svg viewBox="0 0 500 60" width="500" height="60" aria-hidden="true" id="barcode">
+  <!-- LEFT 5 BARS -->
   <g transform="translate(0,10)">
     <rect x="0" y="0" width="8" height="40" fill="#1e944b" rx="2"/>
     <rect x="12" y="0" width="8" height="40" fill="#f39c12" rx="2"/>
@@ -62,10 +60,13 @@ header.title p{margin:0; font-size:13px; color:var(--muted);}
     <rect x="36" y="0" width="8" height="40" fill="#6f2c8f" rx="2"/>
     <rect x="48" y="0" width="8" height="40" fill="#1e944b" rx="2"/>
   </g>
+  <!-- TOP & BOTTOM LINES -->
   <line x1="0" y1="5" x2="56" y2="5" stroke="#bfbfbf" stroke-width="6" stroke-linecap="round"/>
   <line x1="0" y1="55" x2="56" y2="55" stroke="#bfbfbf" stroke-width="6" stroke-linecap="round"/>
+  <!-- DIAGONALS AFTER 5 BARS -->
   <line x1="56" y1="5" x2="116" y2="55" stroke="#bfbfbf" stroke-width="6" stroke-linecap="round"/>
   <line x1="56" y1="55" x2="116" y2="5" stroke="#bfbfbf" stroke-width="6" stroke-linecap="round"/>
+  <!-- RIGHT 29 BARS -->
   <g transform="translate(116,10)">
     <g>
       <rect x="0"   y="0" width="8" height="40" fill="#1e944b" rx="2"/>
@@ -101,7 +102,6 @@ header.title p{margin:0; font-size:13px; color:var(--muted);}
     </g>
   </g>
 </svg>
-</div>
 
 <div class="controls">
   <input type="search" id="search" placeholder="Search strength name or rank">
@@ -121,7 +121,6 @@ header.title p{margin:0; font-size:13px; color:var(--muted);}
   <p>Tip: hover to preview description. Use Search/Highlight Top 5/Export CSV for quick actions.</p>
 </div>
 <div class="tooltip" id="tooltip"></div>
-</div>
 
 <script>
 // ===== Data =====
@@ -149,101 +148,71 @@ const strengths = [
   {rank:21,name:"Responsibility",domain:"EXECUTING",short:"Reliable.",tips:"Own weekly folder cleanup tasks."},
   {rank:22,name:"Analytical",domain:"STRATEGIC",short:"Examine data.",tips:"Review chargeback patterns."},
   {rank:23,name:"Focus",domain:"EXECUTING",short:"Prioritize.",tips:"Block 45-min deep exception handling."},
-  {rank:24,name:"Self-Assurance",domain:"INFLUENCING",short:"Confident.",tips:"Take ownership in ambiguous remits."},
-  {rank:25,name:"Adaptability",domain:"RELATIONSHIP",short:"Flexible.",tips:"Pivot to urgent bank items."},
-  {rank:26,name:"Arranger",domain:"EXECUTING",short:"Organize flexibly.",tips:"Optimize folder/routing structure."},
-  {rank:27,name:"Consistency",domain:"EXECUTING",short:"Fairness.",tips:"Keep consistent SLAs & templates."},
-  {rank:28,name:"Belief",domain:"EXECUTING",short:"Principled.",tips:"Document decisions for audits."},
-  {rank:29,name:"Communication",domain:"INFLUENCING",short:"Express ideas clearly.",tips:"Write crisp emails for remittance mismatches."},
-  {rank:30,name:"Context",domain:"STRATEGIC",short:"Look to past.",tips:"Check historical transactions."},
-  {rank:31,name:"Activator",domain:"INFLUENCING",short:"Make things happen.",tips:"Launch small process tests."},
-  {rank:32,name:"Command",domain:"INFLUENCING",short:"Lead confidently.",tips:"Drive cross-team decisions."},
-  {rank:33,name:"Woo",domain:"INFLUENCING",short:"Win others over.",tips:"Build rapport on onboarding calls."},
-  {rank:34,name:"Includer",domain:"RELATIONSHIP",short:"Make people feel included.",tips:"Credit quieter teammates."}
+  {rank:24,name:"Self-Assurance",domain:"INFLUENCING",short:"Confident.",tips:"Take ownership of errors without blame."},
+  {rank:25,name:"Communication",domain:"INFLUENCING",short:"Express ideas.",tips:"Send clear emails for remittance issues."},
+  {rank:26,name:"Adaptability",domain:"RELATIONSHIP",short:"Go with flow.",tips:"Adjust to bank delays gracefully."},
+  {rank:27,name:"Woo",domain:"INFLUENCING",short:"Win others over.",tips:"Follow up on unpaid invoices."},
+  {rank:28,name:"Command",domain:"INFLUENCING",short:"Lead firmly.",tips:"Escalate high-value disputes."},
+  {rank:29,name:"Includer",domain:"RELATIONSHIP",short:"Include everyone.",tips:"Loop teammates for large reconciliations."},
+  {rank:30,name:"Ideation",domain:"STRATEGIC",short:"Creative ideas.",tips:"Optimize exception workflows."},
+  {rank:31,name:"Belief",domain:"EXECUTING",short:"Core values.",tips:"Keep SOP adherence tight."},
+  {rank:32,name:"Activator",domain:"INFLUENCING",short:"Make things happen.",tips:"Start small improvement tasks."},
+  {rank:33,name:"Restorative",domain:"EXECUTING",short:"Fix problems.",tips:"Review unresolved ACH cases."},
+  {rank:34,name:"Harmony",domain:"RELATIONSHIP",short:"Peace maker.",tips:"Mediation in disputes."}
 ];
 
-const domainOrder = [
-  {key:"EXECUTING",label:"Executing",color:"#8b61ff"},
-  {key:"INFLUENCING",label:"Influencing",color:"#ff9b3f"},
-  {key:"RELATIONSHIP",label:"Relationship",color:"#3aa0ff"},
-  {key:"STRATEGIC",label:"Strategic",color:"#38d07a"}
-];
+// ===== Map colors to domain (for stackbar & highlighting) =====
+const domainColor = {
+  "RELATIONSHIP":"#1e944b",
+  "EXECUTING":"#f39c12",
+  "STRATEGIC":"#1f6fae",
+  "INFLUENCING":"#6f2c8f"
+};
 
-// ===== Render Columns & Tiles =====
-const grid = d3.select('#grid');
-domainOrder.forEach(d=>{
-  const col = grid.append('div').attr('class','column').attr('data-domain',d.key);
-  col.append('h3').text(d.label);
-  col.append('div').attr('class','count').text('0');
-  col.append('div').attr('class','list');
-});
+// ===== Grid rendering =====
+const grid = d3.select("#grid");
+const tooltip = d3.select("#tooltip");
+const details = d3.select("#details");
 
-function renderTiles(data){
-  domainOrder.forEach(dom=>{
-    const items = data.filter(d=>d.domain===dom.key).sort((a,b)=>a.rank-b.rank);
-    const list = grid.select(`[data-domain="${dom.key}"] .list`);
-    grid.select(`[data-domain="${dom.key}"] .count`).text(items.length);
-    const tiles = list.selectAll('.tile').data(items,d=>d.rank);
-    tiles.exit().remove();
-    const enter = tiles.enter().append('div').attr('class',`tile`).style('border-left',`5px solid ${dom.color}`)
-      .on('mousemove',showTooltip)
-      .on('mouseout',hideTooltip)
-      .on('click',showDetails);
-    enter.append('div').attr('class','rank').text(d=>d.rank);
-    const info = enter.append('div');
-    info.append('div').attr('class','name').text(d=>d.name);
-    info.append('div').attr('class','sub').text(d=>`#${d.rank} • ${dom.label}`);
-    enter.merge(tiles).style('opacity',1);
+grid.selectAll(".column").data(strengths).enter()
+  .append("div").attr("class","column")
+  .append("div").attr("class","tile")
+  .style("border-left", d => `5px solid ${domainColor[d.domain]}`)
+  .on("mouseover", (event,d)=>{
+    tooltip.style("display","block")
+      .html(`<strong>${d.name}</strong><br>${d.short}`);
+  })
+  .on("mousemove", (event)=>tooltip.style("top",(event.pageY+12)+"px").style("left",(event.pageX+12)+"px"))
+  .on("mouseout", ()=>tooltip.style("display","none"))
+  .on("click",(event,d)=>{
+    details.html(`<h2>${d.name} (Rank ${d.rank})</h2><p>${d.tips}</p>`);
+    highlightBarcode(d.rank);
+  })
+  .append("div").attr("class","name").text(d => d.name);
+
+// ===== Sync Barcode =====
+const barcodeSVG = d3.select("#barcode");
+const allBars = barcodeSVG.selectAll("rect").nodes();
+
+function highlightBarcode(rank){
+  allBars.forEach((bar,i)=>{
+    bar.style.stroke = null;
+    bar.style.strokeWidth = null;
+    if(i===rank-1){bar.style.stroke="#fff"; bar.style.strokeWidth="2";}
   });
-}
-renderTiles(strengths);
-
-// ===== Tooltip =====
-const tooltip = d3.select('#tooltip');
-function showTooltip(event,d){
-  tooltip.style('display','block').html(`<strong>${d.rank}. ${d.name}</strong><div style="color:var(--muted)">${d.short}</div>`);
-  const [mx,my] = d3.pointer(event);
-  tooltip.style('left',event.clientX+12+'px').style('top',event.clientY+12+'px');
-  d3.selectAll('.tile').classed('muted',t=>t.domain!==d.domain);
-}
-function hideTooltip(){ tooltip.style('display','none'); d3.selectAll('.tile').classed('muted',false); }
-
-// ===== Details Panel =====
-function showDetails(event,d){
-  const details = d3.select('#details');
-  const domColor = domainOrder.find(x=>x.key===d.domain).color;
-  details.html(`<h2 style="color:${domColor}">${d.rank}. ${d.name} <span style="font-size:13px;color:var(--muted)">(${d.domain})</span></h2>
-  <p>${d.short}</p>
-  <p><strong>Practical tips:</strong> ${d.tips}</p>`);
 }
 
 // ===== Stackbar =====
-function renderStackBar(data){
-  const counts = domainOrder.map(d=>({label:d.label,count:data.filter(s=>s.domain===d.key).length,color:d.color}));
-  const total = d3.sum(counts,d=>d.count);
-  const svg = d3.select('#stackbar').attr('width',520);
-  let x=0;
-  counts.forEach(seg=>{
-    const w = (seg.count/total)*520;
-    svg.append('rect').attr('x',x).attr('y',0).attr('width',w).attr('height',16).attr('fill',seg.color)
-      .append('title').text(`${seg.label}: ${seg.count}`);
-    x+=w;
-  });
-}
-renderStackBar(strengths);
-
-// ===== Controls =====
-d3.select('#search').on('input',function(){
-  const q=this.value.toLowerCase().trim();
-  d3.selectAll('.tile').style('opacity',d=>(d.name.toLowerCase().includes(q)||String(d.rank)===q?1:0.18));
-});
-d3.select('#top5').on('click',()=>{d3.selectAll('.tile').style('opacity',t=>t.rank<=5?1:0.12); showDetails(null,strengths[0]);});
-d3.select('#exportCSV').on('click',()=>{
-  const rows=["rank,name,domain,short"];
-  strengths.forEach(s=>rows.push(`${s.rank},"${s.name}","${s.domain}","${s.short}"`));
-  const blob=new Blob([rows.join("\n")],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='clifton_strengths.csv'; a.click(); URL.revokeObjectURL(url);
+const stackSVG = d3.select("#stackbar");
+const domainCounts = d3.rollup(strengths,d=>d.length,d=>d.domain);
+const total = strengths.length;
+let x0 = 0;
+domainCounts.forEach((count,domain)=>{
+  const w = count/total*100 + "%";
+  stackSVG.append("rect")
+    .attr("x", x0).attr("y",0).attr("width", w).attr("height",16)
+    .attr("fill", domainColor[domain]);
+  x0 = `calc(${x0} + ${w})`;
 });
 </script>
 </body>
