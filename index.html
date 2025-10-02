@@ -198,6 +198,19 @@
     /* faded */
     .muted { opacity:0.28; }
 
+    /* DNA Barcode Styles */
+    #dna-barcode {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #dna-barcode svg {
+      background: #c0c0c0; /* Gray background like in the picture */
+      border-radius: 8px;
+      overflow: visible;
+    }
+
   </style>
 </head>
 <body>
@@ -221,6 +234,9 @@
         <span class="dot domain-executing" style="width:12px;height:12px;border-radius:50%;display:inline-block;margin-left:8px"></span> Executing
       </div>
     </div>
+
+    <!-- DNA Barcode Chart Here -->
+    <div id="dna-barcode"></div>
 
     <div id="gallupStrengths">
       <div class="grid" id="grid"></div>
@@ -425,6 +441,98 @@ function renderStackBar(data){
   });
 }
 renderStackBar(strengths);
+
+/* ===== DNA Barcode Chart (added based on your picture) ===== */
+function renderDNABarcode() {
+  const svgWidth = 800; // Total width like in the picture
+  const svgHeight = 40; // Height for the bars
+  const barWidth = 4; // Width of each vertical bar
+  const gap = 1; // Small gap between bars
+
+  // Colors from the picture: repeating pattern of blues, oranges, purples, greens, etc.
+  const colors = [
+    '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', // Left stub colors
+    '#FF00FF', '#FF0000', '#800080', '#008000', '#0000FF', '#00FFFF',
+    '#00FF00', '#FFFF00', '#FF00FF', '#FF0000', '#800080', '#008000',
+    '#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF00FF', '#FF0000',
+    '#800080', '#008000', '#0000FF', '#00FFFF', '#00FF00', '#FFFF00',
+    '#FF00FF', '#FF0000', '#800080', '#008000', '#0000FF', '#00FFFF',
+    '#00FF00', '#FFFF00', '#FF00FF', '#FF0000' // Extended for length
+  ];
+
+  // Left stub: small section with 4 bars and a pointy end
+  const leftStubBars = 4;
+  const leftStubWidth = leftStubBars * (barWidth + gap) + 20; // Extra for pointy shape
+
+  // Main bar: longer section with many bars
+  const mainBars = 34; // Matches your 34 strengths for symbolism
+  const mainWidth = mainBars * (barWidth + gap) + 40; // Extra for pointy ends
+
+  const svg = d3.select('#dna-barcode')
+    .append('svg')
+    .attr('width', svgWidth)
+    .attr('height', svgHeight + 20) // Extra space for pointy ends
+    .attr('viewBox', `0 -10 ${svgWidth} ${svgHeight + 20}`);
+
+  // Gray background (like in picture)
+  svg.append('rect')
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('width', svgWidth)
+    .attr('height', svgHeight)
+    .attr('fill', '#c0c0c0');
+
+  // Left stub bars
+  let xPos = 20; // Start after pointy end space
+  for (let i = 0; i < leftStubBars; i++) {
+    svg.append('rect')
+      .attr('x', xPos)
+      .attr('y', 0)
+      .attr('width', barWidth)
+      .attr('height', svgHeight)
+      .attr('fill', colors[i % colors.length]);
+    xPos += barWidth + gap;
+  }
+
+  // Gap between left stub and main bar (like in picture)
+  xPos += 10;
+
+  // Main bar bars
+  for (let i = 0; i < mainBars; i++) {
+    svg.append('rect')
+      .attr('x', xPos)
+      .attr('y', 0)
+      .attr('width', barWidth)
+      .attr('height', svgHeight)
+      .attr('fill', colors[i % colors.length]);
+    xPos += barWidth + gap;
+  }
+
+  // Add pointy ends (triangles) for DNA helix look
+  // Left end of left stub
+  svg.append('polygon')
+    .attr('points', `0,${svgHeight/2} 20,0 20,${svgHeight}`)
+    .attr('fill', '#c0c0c0');
+
+  // Right end of left stub
+  svg.append('polygon')
+    .attr('points', `${leftStubWidth},${svgHeight/2} ${leftStubWidth - 20},0 ${leftStubWidth - 20},${svgHeight}`)
+    .attr('fill', '#c0c0c0');
+
+  // Left end of main bar
+  const mainStart = leftStubWidth + 10;
+  svg.append('polygon')
+    .attr('points', `${mainStart},${svgHeight/2} ${mainStart + 20},0 ${mainStart + 20},${svgHeight}`)
+    .attr('fill', '#c0c0c0');
+
+  // Right end of main bar
+  svg.append('polygon')
+    .attr('points', `${svgWidth},${svgHeight/2} ${svgWidth - 20},0 ${svgWidth - 20},${svgHeight}`)
+    .attr('fill', '#c0c0c0');
+}
+
+// Render the DNA barcode on load
+renderDNABarcode();
 
 /* ===== Controls: Search, Top5, Export CSV ===== */
 d3.select('#search').on('input', function(){
