@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interactive CliftonStrengths — Mohammad Mujahid</title>
+  <title>CliftonStrengths — Mohammad Mujahid</title>
   <!-- D3 v7 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -205,14 +205,13 @@
     <header class="title">
       <div>
         <h1>Mohammad Mujahid — CliftonStrengths 34 (interactive)</h1>
-        <p>You lead with Relationship Building themes — grid + details built with D3.js</p>
+        <p>I lead with Relationship Building</p>
       </div>
     </header>
 
     <div class="controls">
       <input type="search" id="search" placeholder="Search strength name or rank (e.g., 'Relator' or '1')">
       <button class="btn" id="top5">Highlight Top 5</button>
-      <button class="btn" id="exportCSV">Export CSV</button>
       <div style="flex:1"></div>
       <div class="legend">
         <span class="dot domain-relationship" style="width:12px;height:12px;border-radius:50%;display:inline-block"></span> Relationship
@@ -372,11 +371,16 @@ function tileMouseMove(event, d){
   tooltip.style('left', left + 'px').style('top', top + 'px');
   // highlight same-domain tiles
   d3.selectAll('.tile').classed('muted', t => t.domain !== d.domain);
+  highlightRank(d.rank);
+
 }
+
 
 function tileMouseOut(){
   tooltip.style('display','none');
   d3.selectAll('.tile').classed('muted', false);
+  clearAllHighlights();
+
 }
 
 function tileClick(event,d){
@@ -392,6 +396,9 @@ function tileClick(event,d){
   // (we set a CSS var for visibility: find the domain color)
   const domColor = domainOrder.find(x => x.key===d.domain).color;
   details.select('h2').style('color', domColor);
+  highlightRank(d.rank);
+highlightDomain(d.domain);
+
 }
 function tileClick(event,d){
   const details = d3.select('#details');
@@ -417,6 +424,46 @@ function tileClick(event,d){
 
 
 /* ===== Stack bar showing distribution of domains ===== */
+function clearAllHighlights(){
+  d3.select('#svgBarWrap svg').selectAll('rect')
+    .attr('stroke', null).attr('stroke-width', null);
+  d3.selectAll('.tile').classed('muted', false);
+  d3.selectAll('.stack-seg')
+    .attr('opacity', 1)
+    .attr('stroke', null)
+    .attr('stroke-width', null);
+}
+
+function highlightRank(rank){
+  // top bar
+  d3.select('#svgBarWrap svg').selectAll('rect')
+    .attr('stroke', null).attr('stroke-width', null);
+  d3.select('#svgBarWrap svg rect[data-rank="' + rank + '"]')
+    .attr('stroke', '#fff').attr('stroke-width', 2);
+
+  // tiles
+  d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
+}
+
+function highlightDomain(domainKey){
+  // tiles by domain
+  d3.selectAll('.tile').classed('muted', t => t.domain !== domainKey);
+
+  // top bars by domain
+  const bars = d3.select('#svgBarWrap svg').selectAll('rect');
+  bars.attr('stroke', null).attr('stroke-width', null);
+  bars.filter(d => d && d.domain === domainKey)
+      .attr('stroke', '#fff').attr('stroke-width', 2);
+
+  // stackbar emphasize the selected segment
+  d3.selectAll('.stack-seg')
+    .attr('opacity', s => s && s.key === domainKey ? 1 : 0.25)
+    .attr('stroke', s => s && s.key === domainKey ? '#fff' : null)
+    .attr('stroke-width', s => s && s.key === domainKey ? 2 : null);
+}
+
+
+  
 function renderStackBar(data){
   const counts = domainOrder.map(dom => {
     return { key: dom.key, label: dom.label, color: dom.color, count: data.filter(d => d.domain===dom.key).length };
@@ -431,15 +478,26 @@ function renderStackBar(data){
   let x = 0;
   counts.forEach(segment => {
     const segW = Math.round((segment.count / total) * width);
-    svg.append('rect')
-      .attr('x', x)
-      .attr('y', 0)
-      .attr('width', segW)
-      .attr('height', height)
-      .attr('fill', segment.color)
-      .append('title').text(`${segment.label}: ${segment.count}`);
-    x += segW;
-  });
+svg.append('rect')
+  .attr('x', x)
+  .attr('y', 0)
+  .attr('width', segW)
+  .attr('height', height)
+  .attr('fill', segment.color)
+  .attr('rx', 4)
+  .attr('class', 'stack-seg')
+  .datum(segment)
+  .on('mouseover', function(e, s){
+    highlightDomain(s.key);
+  })
+  .on('mouseout', function(){
+    clearAllHighlights();
+  })
+  .on('click', function(e, s){
+    highlightDomain(s.key);
+  })
+  .append('title').text(`${segment.label}: ${segment.count}`);
+
 
   // legend to right
   const legend = d3.select('#stackLegend').html('');
@@ -529,19 +587,22 @@ d3.select('#exportCSV').on('click', function(){
         .attr('fill', d => domainColors[d.domain] || '#ccc')
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
-        .on('mouseover', function(e,d) {
-          d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
-          d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-        })
-        .on('mouseout', function() {
-          d3.selectAll('.tile').classed('muted', false);
-          d3.select(this).attr('stroke',null).attr('stroke-width',null);
-        })
-        .on('click', function(e,d) {
-          tileClick(e,d);
-          svg.selectAll('rect').attr('stroke',null).attr('stroke-width',null);
-          d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-        });
+.on('mouseover', function(e,d) {
+  d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
+  d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
+  highlightRank(d.rank);
+})
+.on('mouseout', function() {
+  d3.selectAll('.tile').classed('muted', false);
+  d3.select(this).attr('stroke',null).attr('stroke-width',null);
+  clearAllHighlights();
+})
+.on('click', function(e,d) {
+  tileClick(e,d);
+  svg.selectAll('rect').attr('stroke',null).attr('stroke-width',null);
+  d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
+  highlightDomain(d.domain);
+});
   }
 
   // ---- LEFT 5 bars ----
