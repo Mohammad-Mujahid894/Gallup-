@@ -84,9 +84,30 @@
       grid-template-columns:repeat(4, 1fr);
       gap:var(--gap);
     }
-    @media (max-width:900px){
-      .grid{ grid-template-columns:1fr; }
-    }
+@media (max-width:900px){
+  .container {
+    padding: 12px; /* smaller padding on mobile */
+  }
+  .grid {
+    gap:8px;
+  }
+}
+#svgBarWrap svg {
+  width: 100%;
+  height: auto;
+}
+    .stackbar-wrap {
+  flex-wrap: wrap;  /* allow legend + bar to wrap */
+}
+.stack-legend {
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.tile {
+  flex: 1 1 auto; /* allow shrinking on mobile */
+  word-break: break-word;
+}
+
 
     .column{
       background:var(--card);
@@ -465,27 +486,26 @@ function renderStackBar(data){
   });
   const total = d3.sum(counts, d => d.count);
 
-  const width = 520;
-  const height = 16;
-  d3.select('#stackbar').html(''); // clear
-  const svg = d3.select('#stackbar').append('svg').attr('width', width).attr('height', height);
+const containerWidth = document.getElementById('stackbar').clientWidth;
+const svg = d3.select('#stackbar').append('svg')
+  .attr('width', containerWidth)
+  .attr('height', 16)
+  .attr('viewBox', `0 0 ${containerWidth} 16`);
 
-  let x = 0;
+let x = 0;
 counts.forEach(segment => {
-  const segW = Math.round((segment.count / total) * width);
-svg.append('rect')
-  .attr('x', x)
-  .attr('y', 0)
-  .attr('width', segW)
-  .attr('height', height)
-  .attr('fill', segment.color)
-  .attr('rx', 4)
-  .attr('class', 'stack-seg')
-  .append('title').text(`${segment.label}: ${segment.count}`);
+  const segW = (segment.count / total) * containerWidth;
+  svg.append('rect')
+    .attr('x', x)
+    .attr('y', 0)
+    .attr('width', segW)
+    .attr('height', 16)
+    .attr('fill', segment.color)
+    .attr('rx', 4)
+    .attr('class','stack-seg');
+  x += segW;
+});
 
-
-  x += segW; // advance x for next segment
-}); // <- close forEach properly
 
 
   // legend to right
