@@ -197,7 +197,11 @@
 
     /* faded */
     .muted { opacity:0.28; }
-
+.tile.highlighted {
+  transform: scale(1.05); /* subtle zoom */
+  box-shadow: 0 12px 35px rgba(2,8,23,0.7);
+  background: rgba(255,255,255,0.06);
+}
   </style>
 </head>
 <body>
@@ -630,14 +634,24 @@ d3.select('#exportCSV').on('click', function(){
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 }
 function barHoverOnly(d){
+  // Reset previous highlights
+  d3.selectAll('.tile').classed('muted', false).classed('highlighted', false);
+  clearAllHighlights(); // clears stackbar and top bar strokes
+
   // Highlight the top barcode
-  d3.select('#svgBarWrap svg rect')
-    .attr('stroke', null).attr('stroke-width', null);
   d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
-    .attr('stroke', '#fff').attr('stroke-width', 2);
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 2);
 
   // Highlight the corresponding tile
-  d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
+  d3.selectAll('.tile')
+    .filter(t => t.rank === d.rank)
+    .classed('highlighted', true);
+
+  // Muted effect for other tiles (optional)
+  d3.selectAll('.tile')
+    .filter(t => t.rank !== d.rank)
+    .classed('muted', true);
 
   // Highlight stackbar
   const strength = strengths.find(s => s.rank === d.rank);
