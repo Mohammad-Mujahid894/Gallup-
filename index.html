@@ -593,17 +593,15 @@ d3.select('#exportCSV').on('click', function(){
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
 .on('mouseover', function(e,d) {
-  highlightRank(d.rank); // only matching tile + bar [web:59]
+  tileMouseMove(e, d); // highlight tile + stack bar + top barcode
 })
 .on('mouseout', function() {
-  clearAllHighlights(); // reset [web:74]
+  tileMouseOut(); // reset everything
 })
 .on('click', function(e,d) {
-  tileClick(e,d); // open details, optional keep outline below [web:59]
-  d3.select('#svgBarWrap svg').selectAll('rect')
-    .attr('stroke', null).attr('stroke-width', null);
-  d3.select(this).attr('stroke', '#fff').attr('stroke-width', 2);
+  tileClick(e,d); // open details, optional keep outline
 });
+
 
 
   }
