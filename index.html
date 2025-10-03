@@ -588,16 +588,14 @@ d3.select('#exportCSV').on('click', function(){
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
 .on('mouseover', function(e,d) {
-  barHover(e,d); // highlight tile + barcode + stackbar
+  barHoverOnly(d); // highlight only — no tooltip or details
 })
 .on('mouseout', function() {
   clearAllHighlights(); // reset everything
 })
 .on('click', function(e,d) {
-  tileClick(e,d); // open details
+  tileClick(e,d); // open details panel if clicked
 });
-
-
 
   }
 
@@ -631,7 +629,7 @@ d3.select('#exportCSV').on('click', function(){
     .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 }
-function barHover(e, d){
+function barHoverOnly(d){
   // Highlight the top barcode
   d3.select('#svgBarWrap svg rect')
     .attr('stroke', null).attr('stroke-width', null);
