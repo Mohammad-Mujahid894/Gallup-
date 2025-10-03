@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CliftonStrengths — Mohammad Mujahid</title>
+  <title>Clifton - Strengths</title>
   <!-- D3 v7 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -235,15 +235,10 @@
 
       <div id="details">
         <h2>Click any strength to see details</h2>
-        <p>Tip: hover to preview description. Use Search/Highlight Top 5/Export CSV for quick actions.</p>
       </div>
     </div>
 
     <div class="tooltip" id="tooltip"></div>
-
-    <footer class="small">
-      Built with ❤️ using D3.js — code is educational and editable. (If your site header is sticky, add top padding to the container to avoid overlap.)
-    </footer>
   </div>
 
 <script>
@@ -251,42 +246,42 @@
    DATA: 34 strengths with domains and short descriptions
    ============================ */
 const strengths = [
-  { rank:1, name:"Relator", domain:"RELATIONSHIP", short:"You build close relationships and trust.", tips:"Use with customers: develop one-to-one rapport; in O2C, call the same AR contact to nurture relationships." },
+  { rank:1, name:"Relator", domain:"RELATIONSHIP", short:"I build close relationships and trust.", tips:"Use with customers: develop one-to-one rapport; in O2C, call the same AR contact to nurture relationships." },
   { rank:2, name:"Deliberative", domain:"EXECUTING", short:"Careful, cautious, risk-aware decision maker.", tips:"Use to evaluate exceptions and ACH/NSF cases before pushing for automation." },
-  { rank:3, name:"Learner", domain:"STRATEGIC", short:"You love learning and improving.", tips:"Great for studying ICMAI — set micro-goals and learn one accounting concept per shift." },
-  { rank:4, name:"Intellection", domain:"STRATEGIC", short:"You enjoy deep thinking and reflection.", tips:"Use for root-cause analysis when investigating complex payment mismatches." },
-  { rank:5, name:"Input", domain:"STRATEGIC", short:"You collect ideas, facts and resources.", tips:"Build and maintain a quick-reference folder for bank codes and comment codes." },
-  { rank:6, name:"Empathy", domain:"RELATIONSHIP", short:"You sense other people's feelings.", tips:"Helpful when handling upset customers; reflect back feelings to de-escalate." },
-  { rank:7, name:"Individualization", domain:"RELATIONSHIP", short:"You see each person's uniqueness.", tips:"Customize communication templates — some customers prefer short emails, others phone calls." },
-  { rank:8, name:"Developer", domain:"RELATIONSHIP", short:"You see and grow potential in others.", tips:"Mentor a new teammate on TANDEM processes gradually." },
-  { rank:9, name:"Harmony", domain:"RELATIONSHIP", short:"You look for agreement and avoid conflict.", tips:"In dispute resolution, focus on shared goals to reach a compromise." },
-  { rank:10, name:"Restorative", domain:"EXECUTING", short:"You love solving problems and fixing issues.", tips:"Perfect for exception queues — you’ll enjoy resolving partial remits and unclear checks." },
+  { rank:3, name:"Learner", domain:"STRATEGIC", short:"I love learning and improving.", tips:"Great for studying ICMAI — set micro-goals and learn one accounting concept per shift." },
+  { rank:4, name:"Intellection", domain:"STRATEGIC", short:"I enjoy deep thinking and reflection.", tips:"Use for root-cause analysis when investigating complex payment mismatches." },
+  { rank:5, name:"Input", domain:"STRATEGIC", short:"I collect ideas, facts and resources.", tips:"Build and maintain a quick-reference folder for bank codes and comment codes." },
+  { rank:6, name:"Empathy", domain:"RELATIONSHIP", short:"I sense other people's feelings.", tips:"Helpful when handling upset customers; reflect back feelings to de-escalate." },
+  { rank:7, name:"Individualization", domain:"RELATIONSHIP", short:"I see each person's uniqueness.", tips:"Customize communication templates — some customers prefer short emails, others phone calls." },
+  { rank:8, name:"Developer", domain:"RELATIONSHIP", short:"I see and grow potential in others.", tips:"Mentor a new teammate on TANDEM processes gradually." },
+  { rank:9, name:"Harmony", domain:"RELATIONSHIP", short:"I look for agreement and avoid conflict.", tips:"In dispute resolution, focus on shared goals to reach a compromise." },
+  { rank:10, name:"Restorative", domain:"EXECUTING", short:"I love solving problems and fixing issues.", tips:"Perfect for exception queues — you’ll enjoy resolving partial remits and unclear checks." },
 
-  { rank:11, name:"Ideation", domain:"STRATEGIC", short:"You generate fresh, creative ideas.", tips:"Propose small automation or template ideas to reduce repetitive manual steps." },
-  { rank:12, name:"Connectedness", domain:"RELATIONSHIP", short:"You see links and a larger story.", tips:"Use when mapping how payments, credit holds, and statements affect customers." },
-  { rank:13, name:"Competition", domain:"INFLUENCING", short:"You measure yourself and like to win.", tips:"Set a safe productivity target (e.g., daily matched checks) and beat your own score." },
-  { rank:14, name:"Strategic", domain:"STRATEGIC", short:"You spot patterns and best paths forward.", tips:"Use to design an efficient daily workflow for ACH + check queues." },
-  { rank:15, name:"Positivity", domain:"RELATIONSHIP", short:"You bring energy and enthusiasm.", tips:"Lift team morale on tough night shifts with short wins and celebrations." },
-  { rank:16, name:"Discipline", domain:"EXECUTING", short:"You create structure, procedures, and routines.", tips:"Create a standard start-of-shift checklist for reviewing ACH and bank files." },
-  { rank:17, name:"Futuristic", domain:"STRATEGIC", short:"You imagine exciting futures and possibilities.", tips:"Sketch a 6-month improvements roadmap for faster invoice retrievals." },
-  { rank:18, name:"Significance", domain:"INFLUENCING", short:"You want to make an impact and be noticed.", tips:"Volunteer for a small cross-team project to raise visibility." },
-  { rank:19, name:"Maximizer", domain:"INFLUENCING", short:"You turn good into great, focus on strengths.", tips:"Spot colleagues’ strengths and pair them for complex exceptions." },
-  { rank:20, name:"Achiever", domain:"EXECUTING", short:"You have stamina and like finishing tasks.", tips:"Use a visible daily checklist to get the satisfaction of crossing off items." },
+  { rank:11, name:"Ideation", domain:"STRATEGIC", short:"I generate fresh, creative ideas.", tips:"Propose small automation or template ideas to reduce repetitive manual steps." },
+  { rank:12, name:"Connectedness", domain:"RELATIONSHIP", short:"I see links and a larger story.", tips:"Use when mapping how payments, credit holds, and statements affect customers." },
+  { rank:13, name:"Competition", domain:"INFLUENCING", short:"I measure myself and like to win.", tips:"Set a safe productivity target (e.g., daily matched checks) and beat your own score." },
+  { rank:14, name:"Strategic", domain:"STRATEGIC", short:"I spot patterns and best paths forward.", tips:"Use to design an efficient daily workflow for ACH + check queues." },
+  { rank:15, name:"Positivity", domain:"RELATIONSHIP", short:"I bring energy and enthusiasm.", tips:"Lift team morale on tough night shifts with short wins and celebrations." },
+  { rank:16, name:"Discipline", domain:"EXECUTING", short:"I create structure, procedures, and routines.", tips:"Create a standard start-of-shift checklist for reviewing ACH and bank files." },
+  { rank:17, name:"Futuristic", domain:"STRATEGIC", short:"I imagine exciting futures and possibilities.", tips:"Sketch a 6-month improvements roadmap for faster invoice retrievals." },
+  { rank:18, name:"Significance", domain:"INFLUENCING", short:"I want to make an impact and be noticed.", tips:"Volunteer for a small cross-team project to raise visibility." },
+  { rank:19, name:"Maximizer", domain:"INFLUENCING", short:"I turn good into great, focus on strengths.", tips:"Spot colleagues’ strengths and pair them for complex exceptions." },
+  { rank:20, name:"Achiever", domain:"EXECUTING", short:"I have stamina and like finishing tasks.", tips:"Use a visible daily checklist to get the satisfaction of crossing off items." },
 
-  { rank:21, name:"Responsibility", domain:"EXECUTING", short:"You are reliable and keep promises.", tips:"Own a weekly folder cleanup task (invoice folder) and show consistent follow-through." },
-  { rank:22, name:"Analytical", domain:"STRATEGIC", short:"You examine data and look for cause and effect.", tips:"Use when reviewing chargeback patterns by bank/comment code." },
-  { rank:23, name:"Focus", domain:"EXECUTING", short:"You concentrate and prioritize what matters.", tips:"Block 45 minutes for deep exception handling without Slack/phone." },
-  { rank:24, name:"Self-Assurance", domain:"INFLUENCING", short:"Confident and decisive in your choices.", tips:"Take ownership when clarifying ambiguous remits with customers." },
+  { rank:21, name:"Responsibility", domain:"EXECUTING", short:"I am reliable and keep promises.", tips:"Own a weekly folder cleanup task (invoice folder) and show consistent follow-through." },
+  { rank:22, name:"Analytical", domain:"STRATEGIC", short:"I examine data and look for cause and effect.", tips:"Use when reviewing chargeback patterns by bank/comment code." },
+  { rank:23, name:"Focus", domain:"EXECUTING", short:"I concentrate and prioritize what matters.", tips:"Block 45 minutes for deep exception handling without Slack/phone." },
+  { rank:24, name:"Self-Assurance", domain:"INFLUENCING", short:"Confident and decisive in my choices.", tips:"Take ownership when clarifying ambiguous remits with customers." },
   { rank:25, name:"Adaptability", domain:"RELATIONSHIP", short:"Flexible and present-centered; go with the flow.", tips:"Great on shift when priorities change; pivot to urgent bank items." },
-  { rank:26, name:"Arranger", domain:"EXECUTING", short:"You organize but stay flexible to optimize.", tips:"Design an efficient folder & routing structure for invoice distribution." },
+  { rank:26, name:"Arranger", domain:"EXECUTING", short:"I organize but stay flexible to optimize.", tips:"Design an efficient folder & routing structure for invoice distribution." },
   { rank:27, name:"Consistency", domain:"EXECUTING", short:"Fairness, rules and same treatment for all.", tips:"Use consistent templates and SLAs to keep customer experience uniform." },
   { rank:28, name:"Belief", domain:"EXECUTING", short:"Values-driven and principled.", tips:"Bring ethics and clarity to disputes — document decisions for audits." },
-  { rank:29, name:"Communication", domain:"INFLUENCING", short:"You explain and express ideas clearly.", tips:"Write crisp emails explaining remittance mismatches — customers appreciate clarity." },
+  { rank:29, name:"Communication", domain:"INFLUENCING", short:"I explain and express ideas clearly.", tips:"Write crisp emails explaining remittance mismatches — customers appreciate clarity." },
 
-  { rank:30, name:"Context", domain:"STRATEGIC", short:"You look to the past to understand the present.", tips:"When something repeats, check the historical transaction trail to learn patterns." },
-  { rank:31, name:"Activator", domain:"INFLUENCING", short:"You make things happen — quick to start.", tips:"Launch small process tests to speed up a manual reconciliation step." },
-  { rank:32, name:"Command", domain:"INFLUENCING", short:"You lead confidently and take charge.", tips:"Step up to drive a cross-team decision when there’s ambiguity." },
-  { rank:33, name:"Woo", domain:"INFLUENCING", short:"You win others over and start conversations easily.", tips:"Use at onboarding calls to build rapport with new vendors." },
+  { rank:30, name:"Context", domain:"STRATEGIC", short:"I look to the past to understand the present.", tips:"When something repeats, check the historical transaction trail to learn patterns." },
+  { rank:31, name:"Activator", domain:"INFLUENCING", short:"I make things happen — quick to start.", tips:"Launch small process tests to speed up a manual reconciliation step." },
+  { rank:32, name:"Command", domain:"INFLUENCING", short:"I lead confidently and take charge.", tips:"Step up to drive a cross-team decision when there’s ambiguity." },
+  { rank:33, name:"Woo", domain:"INFLUENCING", short:"I win others over and start conversations easily.", tips:"Use at onboarding calls to build rapport with new vendors." },
   { rank:34, name:"Includer", domain:"RELATIONSHIP", short:"You make people feel part of a group.", tips:"Make sure quieter teammates get credit in team updates." }
 ];
 
