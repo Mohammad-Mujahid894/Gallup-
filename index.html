@@ -558,7 +558,7 @@ d3.select('#exportCSV').on('click', function(){
 */
 
 /* END OF SCRIPT */
- function renderCliftonSVGBar(data) {
+function renderCliftonSVGBar(data) {
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
@@ -567,72 +567,78 @@ d3.select('#exportCSV').on('click', function(){
   };
 
   const svgWidth = 500, svgHeight = 60;
-  const barWidth = 8, barHeight = 40, spacing = 12;
+  const baseBarWidth = 8, baseBarHeight = 40, baseSpacing = 12;
 
-  // Reset
+  // Reset container
   d3.select('#svgBarWrap').html('');
+
   const svg = d3.select('#svgBarWrap')
     .append('svg')
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('width', svgWidth)
+    .attr('width', '100%')
     .attr('height', svgHeight);
 
-  // ---- helper function to draw a group of bars ----
-  function drawBars(container, bars) {
+  // Calculate scaling factor based on container width
+  const containerWidth = document.getElementById('svgBarWrap').clientWidth;
+  const scale = containerWidth / svgWidth;
+
+  const barWidth = baseBarWidth * scale;
+  const barHeight = baseBarHeight * scale;
+  const spacing = baseSpacing * scale;
+
+  // Helper to draw bars
+  function drawBars(container, bars, offsetX = 0, offsetY = 0) {
     container.selectAll('rect')
       .data(bars)
       .enter()
       .append('rect')
-        .attr('x', (d,i) => i * spacing)
-        .attr('y', 0)
+        .attr('x', (d,i) => i * spacing + offsetX)
+        .attr('y', offsetY)
         .attr('width', barWidth)
         .attr('height', barHeight)
-        .attr('rx', 2)
+        .attr('rx', 2 * scale)
         .attr('fill', d => domainColors[d.domain] || '#ccc')
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
-.on('mouseover', function(e,d) {
-  barHoverOnly(d); // highlight only — no tooltip or details
-})
-.on('mouseout', function() {
-  clearAllHighlights(); // reset everything
-})
-.on('click', function(e,d) {
-  tileClick(e,d); // open details panel if clicked
-});
+        .on('mouseover', (e,d) => barHoverOnly(d))
+        .on('mouseout', () => clearAllHighlights())
+        .on('click', (e,d) => tileClick(e,d));
+  }
 
+  // Helper to draw lines
+  function drawLine(x1, y1, x2, y2, color='#bfbfbf', width=6) {
+    svg.append('line')
+      .attr('x1', x1 * scale)
+      .attr('y1', y1 * scale)
+      .attr('x2', x2 * scale)
+      .attr('y2', y2 * scale)
+      .attr('stroke', color)
+      .attr('stroke-width', width * scale)
+      .attr('stroke-linecap', 'round');
   }
 
   // ---- LEFT 5 bars ----
   const leftBars = data.filter(d => d.rank <= 5);
-  const leftG = svg.append('g').attr('transform','translate(0,10)');
-  drawBars(leftG, leftBars);
+  drawBars(svg.append('g'), leftBars, 0, 10 * scale);
 
   // ---- Decorative lines left ----
-  svg.append('line').attr('x1',0).attr('y1',5).attr('x2',56).attr('y2',5)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line').attr('x1',0).attr('y1',55).attr('x2',56).attr('y2',55)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  drawLine(0, 5, 56, 5);
+  drawLine(0, 55, 56, 55);
 
   // ---- Diagonals after 5 bars ----
-  svg.append('line').attr('x1',56).attr('y1',5).attr('x2',116).attr('y2',55)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line').attr('x1',56).attr('y1',55).attr('x2',116).attr('y2',5)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  drawLine(56, 5, 116, 55);
+  drawLine(56, 55, 116, 5);
 
   // ---- RIGHT 29 bars ----
   const rightBars = data.filter(d => d.rank > 5);
-  const rightG = svg.append('g').attr('transform','translate(116,10)');
-  drawBars(rightG, rightBars);
+  drawBars(svg.append('g'), rightBars, 116 * scale, 10 * scale);
 
   // ---- Decorative lines right ----
-  svg.append('line')
-    .attr('x1',116).attr('y1',5).attr('x2',500).attr('y2',5)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  drawLine(116, 5, 500, 5);
+  drawLine(116, 55, 500, 55);
 }
+
+  
 function barHoverOnly(d){
   // Reset previous highlights
   d3.selectAll('.tile').classed('muted', false).classed('highlighted', false);
