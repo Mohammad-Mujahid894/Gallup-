@@ -393,11 +393,28 @@ function tileClick(event,d){
   const domColor = domainOrder.find(x => x.key===d.domain).color;
   details.select('h2').style('color', domColor);
 }
-// In tileClick(event, d)
-d3.select('#svgBarWrap svg').selectAll('rect')
-   .attr('stroke',null).attr('stroke-width',null);
-d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
-   .attr('stroke','#fff').attr('stroke-width',2);
+function tileClick(event,d){
+  const details = d3.select('#details');
+  details.html(`
+    <h2 style="color: var(--domColor)">${d.rank}. ${d.name} <span style="font-size:13px;color:var(--muted);margin-left:8px">(${d.domain})</span></h2>
+    <p>${d.short}</p>
+    <p><strong>How to use this strength (practical):</strong> ${d.tips}</p>
+    <p style="margin-top:8px;font-size:13px;color:var(--muted)">Click another tile to view its notes. Use the Search to filter.</p>
+  `);
+
+  const domColor = domainOrder.find(x => x.key===d.domain).color;
+  details.select('h2').style('color', domColor);
+
+  // Highlight the matching bar in the top SVG
+  d3.select('#svgBarWrap svg').selectAll('rect')
+     .attr('stroke', null)
+     .attr('stroke-width', null);
+
+  d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
+     .attr('stroke', '#fff')
+     .attr('stroke-width', 2);
+}
+
 
 /* ===== Stack bar showing distribution of domains ===== */
 function renderStackBar(data){
@@ -479,15 +496,18 @@ d3.select('#exportCSV').on('click', function(){
 */
 
 /* END OF SCRIPT */
-  function renderCliftonSVGBar(data) {
-  // Colors from your SVG
-  const colors = ["#1e944b", "#f39c12", "#1f6fae", "#6f2c8f"];
-  // SVG and bar sizing
+ function renderCliftonSVGBar(data) {
+  const domainColors = {
+    EXECUTING: "#8b61ff",
+    INFLUENCING: "#ff9b3f",
+    RELATIONSHIP: "#3aa0ff",
+    STRATEGIC: "#38d07a"
+  };
+
   const svgWidth = 500, svgHeight = 60;
-  const barWidth = 8, barHeight = 40;
-  const spacing = 12;
-  
-  // Start SVG
+  const barWidth = 8, barHeight = 40, spacing = 12;
+
+  // Reset
   d3.select('#svgBarWrap').html('');
   const svg = d3.select('#svgBarWrap')
     .append('svg')
@@ -495,78 +515,58 @@ d3.select('#exportCSV').on('click', function(){
     .attr('width', svgWidth)
     .attr('height', svgHeight);
 
-  // LEFT 5 bars (ranks 1-5)
-  let xLeft = 0;
+  // ---- helper function to draw a group of bars ----
+  function drawBars(container, bars) {
+    container.selectAll('rect')
+      .data(bars)
+      .enter()
+      .append('rect')
+        .attr('x', (d,i) => i * spacing)
+        .attr('y', 0)
+        .attr('width', barWidth)
+        .attr('height', barHeight)
+        .attr('rx', 2)
+        .attr('fill', d => domainColors[d.domain] || '#ccc')
+        .attr('data-rank', d => d.rank)
+        .style('cursor','pointer')
+        .on('mouseover', function(e,d) {
+          d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
+          d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
+        })
+        .on('mouseout', function() {
+          d3.selectAll('.tile').classed('muted', false);
+          d3.select(this).attr('stroke',null).attr('stroke-width',null);
+        })
+        .on('click', function(e,d) {
+          tileClick(e,d);
+          svg.selectAll('rect').attr('stroke',null).attr('stroke-width',null);
+          d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
+        });
+  }
+
+  // ---- LEFT 5 bars ----
   const leftBars = data.filter(d => d.rank <= 5);
   const leftG = svg.append('g').attr('transform','translate(0,10)');
-  leftG.selectAll('rect')
-    .data(leftBars)
-    .enter()
-    .append('rect')
-      .attr('x', (d,i) => i * spacing)
-      .attr('y', 0)
-      .attr('width', barWidth)
-      .attr('height', barHeight)
-      .attr('fill', (d,i) => colors[i % colors.length])
-      .attr('rx', 2)
-      .attr('data-rank', d => d.rank)
-      .style('cursor','pointer')
-      .on('mouseover', function(e, d) {
-        d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
-        d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-      })
-      .on('mouseout', function(e, d) {
-        d3.selectAll('.tile').classed('muted', false);
-        d3.select(this).attr('stroke',null).attr('stroke-width',null);
-      })
-      .on('click', function(e,d) {
-        tileClick(e,d);
-        svg.selectAll('rect').attr('stroke',null).attr('stroke-width',null);
-        d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-      });
+  drawBars(leftG, leftBars);
 
-  // Top and bottom lines left
+  // ---- Decorative lines left ----
   svg.append('line').attr('x1',0).attr('y1',5).attr('x2',56).attr('y2',5)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line').attr('x1',0).attr('y1',55).attr('x2',56).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // Diagonals after 5 bars
+  // ---- Diagonals after 5 bars ----
   svg.append('line').attr('x1',56).attr('y1',5).attr('x2',116).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line').attr('x1',56).attr('y1',55).attr('x2',116).attr('y2',5)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // RIGHT 29 bars (ranks 6-34)
+  // ---- RIGHT 29 bars ----
   const rightBars = data.filter(d => d.rank > 5);
   const rightG = svg.append('g').attr('transform','translate(116,10)');
-  rightG.selectAll('rect')
-    .data(rightBars)
-    .enter()
-    .append('rect')
-      .attr('x', (d,i) => i * spacing)
-      .attr('y', 0)
-      .attr('width', barWidth)
-      .attr('height', barHeight)
-      .attr('fill', (d,i) => colors[i % colors.length])
-      .attr('rx', 2)
-      .attr('data-rank', d => d.rank)
-      .style('cursor','pointer')
-      .on('mouseover', function(e,d){
-        d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
-        d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-      })
-      .on('mouseout', function(e,d){
-        d3.selectAll('.tile').classed('muted', false);
-        d3.select(this).attr('stroke',null).attr('stroke-width',null);
-      })
-      .on('click', function(e,d){
-        tileClick(e,d);
-        svg.selectAll('rect').attr('stroke',null).attr('stroke-width',null);
-        d3.select(this).attr('stroke','#fff').attr('stroke-width',2);
-      });
-  
-  // Top and bottom lines right
+  drawBars(rightG, rightBars);
+
+  // ---- Decorative lines right ----
   svg.append('line')
     .attr('x1',116).attr('y1',5).attr('x2',500).attr('y2',5)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
@@ -574,6 +574,7 @@ d3.select('#exportCSV').on('click', function(){
     .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 }
+
 </script>
 </body>
 </html>
