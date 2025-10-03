@@ -464,25 +464,16 @@ function renderStackBar(data){
   let x = 0;
 counts.forEach(segment => {
   const segW = Math.round((segment.count / total) * width);
-  svg.append('rect')
-    .attr('x', x)
-    .attr('y', 0)
-    .attr('width', segW)
-    .attr('height', height)
-    .attr('fill', segment.color)
-    .attr('rx', 4)
-    .attr('class', 'stack-seg')
-    .datum(segment)
-    .on('mouseover', function(e, s){
-      highlightDomain(s.key);
-    })
-    .on('mouseout', function(){
-      clearAllHighlights();
-    })
-    .on('click', function(e, s){
-      highlightDomain(s.key);
-    })
-    .append('title').text(`${segment.label}: ${segment.count}`);
+svg.append('rect')
+  .attr('x', x)
+  .attr('y', 0)
+  .attr('width', segW)
+  .attr('height', height)
+  .attr('fill', segment.color)
+  .attr('rx', 4)
+  .attr('class', 'stack-seg')
+  .append('title').text(`${segment.label}: ${segment.count}`);
+
 
   x += segW; // advance x for next segment
 }); // <- close forEach properly
@@ -512,13 +503,28 @@ d3.select('#search').on('input', function(){
   });
 });
 
+let top5Active = false;
+
 d3.select('#top5').on('click', function(){
-  // highlight top 5 tiles (ranks 1..5) and scroll to first if visible
-  d3.selectAll('.tile').style('opacity', t => (t.rank <=5 ? 1 : 0.12));
-  // auto open details for rank 1
-  const top = strengths.find(s => s.rank===1);
-  if(top) tileClick(null, top);
+  if (!top5Active) {
+    // activate
+    d3.selectAll('.tile').style('opacity', t => (t.rank <= 5 ? 1 : 0.12)); // highlight top 5 tiles [web:74]
+    // outline the top 5 bars
+    const svgBars = d3.select('#svgBarWrap svg').selectAll('rect');
+    svgBars.attr('stroke', null).attr('stroke-width', null);
+    strengths.filter(s => s.rank <= 5).forEach(s => {
+      d3.select('#svgBarWrap svg rect[data-rank="' + s.rank + '"]')
+        .attr('stroke', '#fff').attr('stroke-width', 2);
+    });
+    top5Active = true;
+  } else {
+    // deactivate: full reset
+    d3.selectAll('.tile').style('opacity', 1);
+    clearAllHighlights(); // clears strokes and mutes [web:74]
+    top5Active = false;
+  }
 });
+
 
 d3.select('#exportCSV').on('click', function(){
   const rows = ["rank,name,domain,short"];
@@ -577,19 +583,18 @@ d3.select('#exportCSV').on('click', function(){
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
 .on('mouseover', function(e,d) {
-  // rank-to-rank sync: one bar, one tile
-  highlightRank(d.rank); // highlights only the matching bar + mutes other tiles [web:59]
+  highlightRank(d.rank); // only matching tile + bar [web:59]
 })
 .on('mouseout', function() {
-  clearAllHighlights(); // reset both views [web:1]
+  clearAllHighlights(); // reset [web:74]
 })
 .on('click', function(e,d) {
-  tileClick(e,d); // keep your details behavior [web:1]
-  // optional: keep the bar visually selected after click
+  tileClick(e,d); // open details, optional keep outline below [web:59]
   d3.select('#svgBarWrap svg').selectAll('rect')
-    .attr('stroke', null).attr('stroke-width', null); // clear [web:1]
-  d3.select(this).attr('stroke', '#fff').attr('stroke-width', 2); // mark clicked [web:1]
+    .attr('stroke', null).attr('stroke-width', null);
+  d3.select(this).attr('stroke', '#fff').attr('stroke-width', 2);
 });
+
 
   }
 
