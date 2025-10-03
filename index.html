@@ -588,13 +588,13 @@ d3.select('#exportCSV').on('click', function(){
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
 .on('mouseover', function(e,d) {
-  tileMouseMove(e, d); // highlight tile + stack bar + top barcode
+  barHover(e,d); // highlight tile + barcode + stackbar
 })
 .on('mouseout', function() {
-  tileMouseOut(); // reset everything
+  clearAllHighlights(); // reset everything
 })
 .on('click', function(e,d) {
-  tileClick(e,d); // open details, optional keep outline
+  tileClick(e,d); // open details
 });
 
 
@@ -630,6 +630,25 @@ d3.select('#exportCSV').on('click', function(){
   svg.append('line')
     .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+}
+function barHover(e, d){
+  // Highlight the top barcode
+  d3.select('#svgBarWrap svg rect')
+    .attr('stroke', null).attr('stroke-width', null);
+  d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
+    .attr('stroke', '#fff').attr('stroke-width', 2);
+
+  // Highlight the corresponding tile
+  d3.selectAll('.tile').classed('muted', t => t.rank !== d.rank);
+
+  // Highlight stackbar
+  const strength = strengths.find(s => s.rank === d.rank);
+  if(strength){
+    d3.selectAll('.stack-seg')
+      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+  }
 }
 
 </script>
