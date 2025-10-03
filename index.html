@@ -574,6 +574,43 @@ d3.select('#exportCSV').on('click', function(){
     .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
     .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 }
+function renderCliftonSVGBar(data) {
+  const domainColors = {
+    EXECUTING: "#8b61ff",
+    INFLUENCING: "#ff9b3f",
+    RELATIONSHIP: "#3aa0ff",
+    STRATEGIC: "#38d07a"
+  };
+
+  const width = 500;
+  const height = 60;
+
+  // Clear old svg if re-rendering
+  d3.select("#svgBarWrap").html("");
+
+  const svg = d3.select("#svgBarWrap")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", width)
+    .attr("height", height);
+
+  // One rectangle (bar) per strength
+  const barWidth = width / data.length;
+
+  svg.selectAll("rect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", (d, i) => i * barWidth)
+    .attr("y", 10)
+    .attr("width", barWidth - 1)
+    .attr("height", 40)
+    .attr("fill", d => domainColors[d.domain])
+    .attr("rx", 2)
+    .attr("data-rank", d => d.rank)
+    .append("title")
+    .text(d => `${d.rank}. ${d.name} (${d.domain})`);
+}
 
 </script>
 </body>
