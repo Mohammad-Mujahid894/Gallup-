@@ -384,7 +384,6 @@ function tileMouseOut(){
 }
 
 function tileClick(event,d){
-  // fill details panel
   const details = d3.select('#details');
   details.html(`
     <h2 style="color: var(--domColor)">${d.rank}. ${d.name} <span style="font-size:13px;color:var(--muted);margin-left:8px">(${d.domain})</span></h2>
@@ -392,25 +391,23 @@ function tileClick(event,d){
     <p><strong>How to use this strength (practical):</strong> ${d.tips}</p>
     <p style="margin-top:8px;font-size:13px;color:var(--muted)">Click another tile to view its notes. Use the Search to filter.</p>
   `);
-  // set left border color dynamically
-  // (we set a CSS var for visibility: find the domain color)
+
   const domColor = domainOrder.find(x => x.key===d.domain).color;
   details.select('h2').style('color', domColor);
+
+  // highlight in top bar
+  d3.select('#svgBarWrap svg').selectAll('rect')
+     .attr('stroke', null)
+     .attr('stroke-width', null);
+  d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
+     .attr('stroke', '#fff')
+     .attr('stroke-width', 2);
+
+  // also sync helpers
   highlightRank(d.rank);
-highlightDomain(d.domain);
-
+  highlightDomain(d.domain);
 }
-function tileClick(event,d){
-  const details = d3.select('#details');
-  details.html(`
-    <h2 style="color: var(--domColor)">${d.rank}. ${d.name} <span style="font-size:13px;color:var(--muted);margin-left:8px">(${d.domain})</span></h2>
-    <p>${d.short}</p>
-    <p><strong>How to use this strength (practical):</strong> ${d.tips}</p>
-    <p style="margin-top:8px;font-size:13px;color:var(--muted)">Click another tile to view its notes. Use the Search to filter.</p>
-  `);
 
-  const domColor = domainOrder.find(x => x.key===d.domain).color;
-  details.select('h2').style('color', domColor);
 
   // Highlight the matching bar in the top SVG
   d3.select('#svgBarWrap svg').selectAll('rect')
@@ -476,27 +473,30 @@ function renderStackBar(data){
   const svg = d3.select('#stackbar').append('svg').attr('width', width).attr('height', height);
 
   let x = 0;
-  counts.forEach(segment => {
-    const segW = Math.round((segment.count / total) * width);
-svg.append('rect')
-  .attr('x', x)
-  .attr('y', 0)
-  .attr('width', segW)
-  .attr('height', height)
-  .attr('fill', segment.color)
-  .attr('rx', 4)
-  .attr('class', 'stack-seg')
-  .datum(segment)
-  .on('mouseover', function(e, s){
-    highlightDomain(s.key);
-  })
-  .on('mouseout', function(){
-    clearAllHighlights();
-  })
-  .on('click', function(e, s){
-    highlightDomain(s.key);
-  })
-  .append('title').text(`${segment.label}: ${segment.count}`);
+counts.forEach(segment => {
+  const segW = Math.round((segment.count / total) * width);
+  svg.append('rect')
+    .attr('x', x)
+    .attr('y', 0)
+    .attr('width', segW)
+    .attr('height', height)
+    .attr('fill', segment.color)
+    .attr('rx', 4)
+    .attr('class', 'stack-seg')
+    .datum(segment)
+    .on('mouseover', function(e, s){
+      highlightDomain(s.key);
+    })
+    .on('mouseout', function(){
+      clearAllHighlights();
+    })
+    .on('click', function(e, s){
+      highlightDomain(s.key);
+    })
+    .append('title').text(`${segment.label}: ${segment.count}`);
+
+  x += segW; // advance x for next segment
+}); // <- close forEach properly
 
 
   // legend to right
