@@ -419,16 +419,27 @@ function clearAllHighlights(){
     .attr('stroke-width', null);
 }
 
+
 function highlightRank(rank){
-  // top bar
+  // Top barcode
   d3.select('#svgBarWrap svg').selectAll('rect')
     .attr('stroke', null).attr('stroke-width', null);
   d3.select('#svgBarWrap svg rect[data-rank="' + rank + '"]')
     .attr('stroke', '#fff').attr('stroke-width', 2);
 
-  // tiles
+  // Tiles
   d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
+
+  // Stackbar segments
+  const strength = strengths.find(s => s.rank === rank);
+  if(strength){
+    d3.selectAll('.stack-seg')
+      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+  }
 }
+
 
 function highlightDomain(domainKey){
   // tiles by domain
