@@ -84,30 +84,9 @@
       grid-template-columns:repeat(4, 1fr);
       gap:var(--gap);
     }
-@media (max-width:900px){
-  .container {
-    padding: 12px; /* smaller padding on mobile */
-  }
-  .grid {
-    gap:8px;
-  }
-}
-#svgBarWrap svg {
-  width: 100%;
-  height: auto;
-}
-    .stackbar-wrap {
-  flex-wrap: wrap;  /* allow legend + bar to wrap */
-}
-.stack-legend {
-  margin-top: 6px;
-  flex-wrap: wrap;
-}
-.tile {
-  flex: 1 1 auto; /* allow shrinking on mobile */
-  word-break: break-word;
-}
-
+    @media (max-width:900px){
+      .grid{ grid-template-columns:1fr; }
+    }
 
     .column{
       background:var(--card);
@@ -486,26 +465,27 @@ function renderStackBar(data){
   });
   const total = d3.sum(counts, d => d.count);
 
-const containerWidth = document.getElementById('stackbar').clientWidth;
-const svg = d3.select('#stackbar').append('svg')
-  .attr('width', containerWidth)
-  .attr('height', 16)
-  .attr('viewBox', `0 0 ${containerWidth} 16`);
+  const width = 520;
+  const height = 16;
+  d3.select('#stackbar').html(''); // clear
+  const svg = d3.select('#stackbar').append('svg').attr('width', width).attr('height', height);
 
-let x = 0;
+  let x = 0;
 counts.forEach(segment => {
-  const segW = (segment.count / total) * containerWidth;
-  svg.append('rect')
-    .attr('x', x)
-    .attr('y', 0)
-    .attr('width', segW)
-    .attr('height', 16)
-    .attr('fill', segment.color)
-    .attr('rx', 4)
-    .attr('class','stack-seg');
-  x += segW;
-});
+  const segW = Math.round((segment.count / total) * width);
+svg.append('rect')
+  .attr('x', x)
+  .attr('y', 0)
+  .attr('width', segW)
+  .attr('height', height)
+  .attr('fill', segment.color)
+  .attr('rx', 4)
+  .attr('class', 'stack-seg')
+  .append('title').text(`${segment.label}: ${segment.count}`);
 
+
+  x += segW; // advance x for next segment
+}); // <- close forEach properly
 
 
   // legend to right
@@ -578,7 +558,7 @@ d3.select('#exportCSV').on('click', function(){
 */
 
 /* END OF SCRIPT */
-function renderCliftonSVGBar(data) {
+ function renderCliftonSVGBar(data) {
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
@@ -587,78 +567,72 @@ function renderCliftonSVGBar(data) {
   };
 
   const svgWidth = 500, svgHeight = 60;
-  const baseBarWidth = 8, baseBarHeight = 40, baseSpacing = 12;
+  const barWidth = 8, barHeight = 40, spacing = 12;
 
-  // Reset container
+  // Reset
   d3.select('#svgBarWrap').html('');
-
   const svg = d3.select('#svgBarWrap')
     .append('svg')
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('width', '100%')
+    .attr('width', svgWidth)
     .attr('height', svgHeight);
 
-  // Calculate scaling factor based on container width
-  const containerWidth = document.getElementById('svgBarWrap').clientWidth;
-  const scale = containerWidth / svgWidth;
-
-  const barWidth = baseBarWidth * scale;
-  const barHeight = baseBarHeight * scale;
-  const spacing = baseSpacing * scale;
-
-  // Helper to draw bars
-  function drawBars(container, bars, offsetX = 0, offsetY = 0) {
+  // ---- helper function to draw a group of bars ----
+  function drawBars(container, bars) {
     container.selectAll('rect')
       .data(bars)
       .enter()
       .append('rect')
-        .attr('x', (d,i) => i * spacing + offsetX)
-        .attr('y', offsetY)
+        .attr('x', (d,i) => i * spacing)
+        .attr('y', 0)
         .attr('width', barWidth)
         .attr('height', barHeight)
-        .attr('rx', 2 * scale)
+        .attr('rx', 2)
         .attr('fill', d => domainColors[d.domain] || '#ccc')
         .attr('data-rank', d => d.rank)
         .style('cursor','pointer')
-        .on('mouseover', (e,d) => barHoverOnly(d))
-        .on('mouseout', () => clearAllHighlights())
-        .on('click', (e,d) => tileClick(e,d));
-  }
+.on('mouseover', function(e,d) {
+  barHoverOnly(d); // highlight only — no tooltip or details
+})
+.on('mouseout', function() {
+  clearAllHighlights(); // reset everything
+})
+.on('click', function(e,d) {
+  tileClick(e,d); // open details panel if clicked
+});
 
-  // Helper to draw lines
-  function drawLine(x1, y1, x2, y2, color='#bfbfbf', width=6) {
-    svg.append('line')
-      .attr('x1', x1 * scale)
-      .attr('y1', y1 * scale)
-      .attr('x2', x2 * scale)
-      .attr('y2', y2 * scale)
-      .attr('stroke', color)
-      .attr('stroke-width', width * scale)
-      .attr('stroke-linecap', 'round');
   }
 
   // ---- LEFT 5 bars ----
   const leftBars = data.filter(d => d.rank <= 5);
-  drawBars(svg.append('g'), leftBars, 0, 10 * scale);
+  const leftG = svg.append('g').attr('transform','translate(0,10)');
+  drawBars(leftG, leftBars);
 
   // ---- Decorative lines left ----
-  drawLine(0, 5, 56, 5);
-  drawLine(0, 55, 56, 55);
+  svg.append('line').attr('x1',0).attr('y1',5).attr('x2',56).attr('y2',5)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  svg.append('line').attr('x1',0).attr('y1',55).attr('x2',56).attr('y2',55)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 
   // ---- Diagonals after 5 bars ----
-  drawLine(56, 5, 116, 55);
-  drawLine(56, 55, 116, 5);
+  svg.append('line').attr('x1',56).attr('y1',5).attr('x2',116).attr('y2',55)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  svg.append('line').attr('x1',56).attr('y1',55).attr('x2',116).attr('y2',5)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 
   // ---- RIGHT 29 bars ----
   const rightBars = data.filter(d => d.rank > 5);
-  drawBars(svg.append('g'), rightBars, 116 * scale, 10 * scale);
+  const rightG = svg.append('g').attr('transform','translate(116,10)');
+  drawBars(rightG, rightBars);
 
   // ---- Decorative lines right ----
-  drawLine(116, 5, 500, 5);
-  drawLine(116, 55, 500, 55);
+  svg.append('line')
+    .attr('x1',116).attr('y1',5).attr('x2',500).attr('y2',5)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  svg.append('line')
+    .attr('x1',116).attr('y1',55).attr('x2',500).attr('y2',55)
+    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
 }
-
-  
 function barHoverOnly(d){
   // Reset previous highlights
   d3.selectAll('.tile').classed('muted', false).classed('highlighted', false);
@@ -692,3 +666,4 @@ function barHoverOnly(d){
 </script>
 </body>
 </html>
+
