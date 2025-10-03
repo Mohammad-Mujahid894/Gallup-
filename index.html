@@ -409,17 +409,6 @@ function tileClick(event,d){
 }
 
 
-  // Highlight the matching bar in the top SVG
-  d3.select('#svgBarWrap svg').selectAll('rect')
-     .attr('stroke', null)
-     .attr('stroke-width', null);
-
-  d3.select('#svgBarWrap svg rect[data-rank="' + d.rank + '"]')
-     .attr('stroke', '#fff')
-     .attr('stroke-width', 2);
-}
-
-
 /* ===== Stack bar showing distribution of domains ===== */
 function clearAllHighlights(){
   d3.select('#svgBarWrap svg').selectAll('rect')
