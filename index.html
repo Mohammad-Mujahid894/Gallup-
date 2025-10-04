@@ -298,7 +298,61 @@ html, body{ overflow-x: hidden; }
 
 
 
-    
+
+
+
+
+    /* Contain everything horizontally (belt and suspenders) */
+html, body{ overflow-x: hidden; }
+
+/* Keep the domain legend from overflowing */
+.legend{ flex-wrap: wrap; min-width: 0; }
+
+/* Mobile: dense grid of small squares, no overflow */
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr; }     /* domains stacked */
+
+  /* Tweak this number to control columns on mobile */
+  .column .list{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 per row (reduce to 5/4 if still tight) */
+    gap: 6px;                               /* spacing between tiles */
+  }
+
+  /* Main size knobs for mobile tiles */
+  .tile{
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    padding: 4px;         /* smaller padding = smaller visible content */
+    margin: 0;
+    gap: 4px;
+  }
+  .rank{ width: 24px; height: 24px; font-size: 11px; }
+  .name{ font-size: 11px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sub{ display: none; }
+
+  /* Hide hover tooltip on touch so taps feel clean */
+  .tooltip{ display: none !important; }
+}
+
+/* Auto-adjust for narrow phones if needed */
+@media (max-width: 540px){
+  .column .list{ grid-template-columns: repeat(5, 1fr); } /* 5 per row */
+}
+@media (max-width: 420px){
+  .column .list{ grid-template-columns: repeat(4, 1fr); } /* 4 per row */
+}
+
+
+
+
+
+
+    @media (max-width: 900px){
+  .inline-desc{ display: none; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .tile.open .inline-desc{ display: block; }
+}
+
   </style>
 </head>
 <body>
@@ -765,6 +819,18 @@ function barHoverOnly(d){
       .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
       .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
   }
+}
+
+
+
+
+
+
+
+  info.append('div').attr('class','inline-desc').text(d => d.short);
+if (window.matchMedia('(max-width: 900px)').matches){
+  d3.selectAll('.tile').classed('open', false);
+  d3.select(this).classed('open', true);
 }
 
 </script>
