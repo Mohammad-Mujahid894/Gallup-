@@ -202,6 +202,96 @@
   box-shadow: 0 12px 35px rgba(2,8,23,0.7);
   background: rgba(255,255,255,0.06);
 }
+
+
+
+
+
+
+
+    /* Mobile square tiles: two per row */
+@media (max-width: 900px){
+  /* Keep domain columns stacked */
+  .grid{ grid-template-columns: 1fr; }
+
+  /* Make each domain's list a 2-up grid of squares */
+  .column .list{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two per row */
+    gap: 10px;
+  }
+
+  /* Make each tile a perfect square card */
+  .tile{
+    aspect-ratio: 1 / 1;              /* square */
+    width: 100%;
+    margin: 0;                         /* grid gap controls spacing */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;            /* stack content */
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    transition: transform .1s ease, box-shadow .1s ease, background .1s ease;
+  }
+
+  /* Tighter hover for mobile (optional) */
+  .tile:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2,8,23,0.5);
+  }
+
+  /* Make rank a compact badge in the corner */
+  .rank{
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  /* Fit name text inside square without overflow */
+  .name{
+    font-size: 13px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Small subline */
+  .sub{
+    font-size: 11px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Reduce column padding for tighter mobile look */
+  .column{
+    padding: 10px;
+  }
+
+  /* Keep header and legend compact */
+  header.title h1{ font-size: 16px; }
+  header.title p{ font-size: 12px; }
+  .controls input[type="search"]{ min-width: 0; flex: 1; }
+}
+
+/* Ultra-small phones: fall back to 1 per row for readability */
+@media (max-width: 360px){
+  .column .list{
+    grid-template-columns: 1fr; /* single column when space is too tight */
+  }
+}
+@media (max-width: 900px){
+  .tooltip{ display: none !important; }
+}
+
+
+
+    
   </style>
 </head>
 <body>
