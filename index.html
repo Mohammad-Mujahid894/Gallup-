@@ -202,6 +202,12 @@
   box-shadow: 0 12px 35px rgba(2,8,23,0.7);
   background: rgba(255,255,255,0.06);
 }
+#svgBarWrap, #stackbar{ width:100%; overflow:hidden; }
+#svgBarWrap svg, #stackbar svg{ display:block; width:100%; height:auto; max-width:100%; }
+.stackbar-wrap{ flex-wrap: wrap; }
+#stackLegend{ display:flex; flex-wrap: wrap; gap:8px; min-width:0; }
+html, body{ overflow-x: hidden; }
+.container, #gallupStrengths{ max-width: 100%; }
 
 
 
@@ -558,7 +564,12 @@ function renderStackBar(data){
   const width = 520;
   const height = 16;
   d3.select('#stackbar').html(''); // clear
-  const svg = d3.select('#stackbar').append('svg').attr('width', width).attr('height', height);
+const svg = d3.select('#stackbar').append('svg')
+  .attr('viewBox', `0 0 ${width} ${height}`)
+  .attr('preserveAspectRatio', 'xMidYMid meet')
+  .attr('width', null)
+  .attr('height', null);
+
 
   let x = 0;
 counts.forEach(segment => {
@@ -661,11 +672,13 @@ d3.select('#exportCSV').on('click', function(){
 
   // Reset
   d3.select('#svgBarWrap').html('');
-  const svg = d3.select('#svgBarWrap')
-    .append('svg')
-    .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('width', svgWidth)
-    .attr('height', svgHeight);
+ const svg = d3.select('#svgBarWrap')
+  .append('svg')
+  .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
+  .attr('preserveAspectRatio','xMidYMid meet')
+  .attr('width', null)
+  .attr('height', null);
+
 
   // ---- helper function to draw a group of bars ----
   function drawBars(container, bars) {
