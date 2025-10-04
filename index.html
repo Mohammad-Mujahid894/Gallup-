@@ -235,16 +235,6 @@ html, body{ overflow-x: hidden; }
   max-width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
-
     /* Guardrail: never allow horizontal scroll */
 html, body{ overflow-x: hidden; }
 
@@ -309,20 +299,7 @@ html, body{ overflow-x: hidden; }
 /* Guardrail: no horizontal scroll */
 html, body{ overflow-x: hidden; }
 .container, #gallupStrengths, .grid, .column, .column .list{ min-width: 0; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 /* Hidden by default */
 .mobile-modal {
   display: none;
@@ -369,9 +346,6 @@ html, body{ overflow-x: hidden; }
 @media (min-width: 901px){
   .mobile-modal{ display: none !important; }
 }
-
-
-    
   </style>
 </head>
 <body>
@@ -601,8 +575,6 @@ function tileClick(event, d) {
   }
 }
 
-
-
 /* ===== Stack bar showing distribution of domains ===== */
 function clearAllHighlights(){
   d3.select('#svgBarWrap svg').selectAll('rect')
@@ -613,18 +585,14 @@ function clearAllHighlights(){
     .attr('stroke', null)
     .attr('stroke-width', null);
 }
-
-
 function highlightRank(rank){
   // Top barcode
   d3.select('#svgBarWrap svg').selectAll('rect')
     .attr('stroke', null).attr('stroke-width', null);
   d3.select('#svgBarWrap svg rect[data-rank="' + rank + '"]')
     .attr('stroke', '#fff').attr('stroke-width', 2);
-
   // Tiles
   d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
-
   // Stackbar segments
   const strength = strengths.find(s => s.rank === rank);
   if(strength){
@@ -634,8 +602,6 @@ function highlightRank(rank){
       .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
   }
 }
-
-
 function highlightDomain(domainKey){
   // tiles by domain
   d3.selectAll('.tile').classed('muted', t => t.domain !== domainKey);
@@ -652,9 +618,6 @@ function highlightDomain(domainKey){
     .attr('stroke', s => s && s.key === domainKey ? '#fff' : null)
     .attr('stroke-width', s => s && s.key === domainKey ? 2 : null);
 }
-
-
-  
 function renderStackBar(data){
   const counts = domainOrder.map(dom => {
     return { key: dom.key, label: dom.label, color: dom.color, count: data.filter(d => d.domain===dom.key).length };
@@ -669,8 +632,6 @@ const svg = d3.select('#stackbar').append('svg')
   .attr('preserveAspectRatio', 'xMidYMid meet')
   .attr('width', null)
   .attr('height', null);
-
-
   let x = 0;
 counts.forEach(segment => {
   const segW = Math.round((segment.count / total) * width);
@@ -683,11 +644,8 @@ svg.append('rect')
   .attr('rx', 4)
   .attr('class', 'stack-seg')
   .append('title').text(`${segment.label}: ${segment.count}`);
-
-
   x += segW; // advance x for next segment
 }); // <- close forEach properly
-
 
   // legend to right
   const legend = d3.select('#stackLegend').html('');
@@ -866,30 +824,11 @@ function barHoverOnly(d){
   }
 }
 
-
-
-
-
-
-
   info.append('div').attr('class','inline-desc').text(d => d.short);
 if (window.matchMedia('(max-width: 900px)').matches){
   d3.selectAll('.tile').classed('open', false);
   d3.select(this).classed('open', true);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
   <!-- Mobile modal popup -->
 <div id="mobileModal" class="mobile-modal">
@@ -900,4 +839,3 @@ if (window.matchMedia('(max-width: 900px)').matches){
 </div>
 </body>
 </html>
-
