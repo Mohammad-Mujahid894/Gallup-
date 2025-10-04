@@ -236,63 +236,6 @@ html, body{ overflow-x: hidden; }
 }
 
 
-/* Mobile: smaller legend chips and text */
-@media (max-width: 900px){
-  .legend{
-    gap: 8px;
-    font-size: 12px;
-    line-height: 1.1;
-  }
-  .legend .dot{
-    width: 10px !important;
-    height: 10px !important;
-  }
-}
-
-
-
-
-
-/* Mobile: 6 tiny squares per row */
-@media (max-width: 900px){
-  .grid{ grid-template-columns: 1fr; }  /* keep domains stacked */
-
-  .column{ padding: 10px; }  /* tighter card padding */
-
-  .column .list{
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* six per row */
-    gap: 8px;
-  }
-
-  .tile{
-    aspect-ratio: 1 / 1;  /* perfect square */
-    width: 100%;
-    padding: 6px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-    justify-content: flex-start;
-    transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
-  }
-  .tile:hover{ transform: translateY(-1px); box-shadow: 0 4px 10px rgba(2,8,23,0.4); }
-
-  .rank{ width: 26px; height: 26px; font-size: 12px; }
-  .name{ font-size: 12px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-  .sub{ display: none; }   /* hide subline to save space */
-
-  .tooltip{ display: none !important; }  /* no hover tooltip on touch */
-}
-
-/* Auto-adjust for narrow phones so text doesn’t get cramped */
-@media (max-width: 540px){
-  .column .list{ grid-template-columns: repeat(5, 1fr); }
-}
-@media (max-width: 420px){
-  .column .list{ grid-template-columns: repeat(4, 1fr); }
-}
 
 
 
@@ -302,54 +245,86 @@ html, body{ overflow-x: hidden; }
 
 
 
-    /* Contain everything horizontally (belt and suspenders) */
+    /* Guardrail: never allow horizontal scroll */
 html, body{ overflow-x: hidden; }
 
-/* Keep the domain legend from overflowing */
-.legend{ flex-wrap: wrap; min-width: 0; }
+/* Legend wraps nicely; no overflow */
+.legend{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+  align-items: center;
+}
 
-/* Mobile: dense grid of small squares, no overflow */
+/* Mobile layout: dense, contained, tap-friendly */
 @media (max-width: 900px){
-  .grid{ grid-template-columns: 1fr; }     /* domains stacked */
+  /* Keep domain columns stacked on mobile */
+  .grid{ grid-template-columns: 1fr; }
 
-  /* Tweak this number to control columns on mobile */
+  /* Domain list becomes a tight grid of squares */
   .column .list{
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 per row (reduce to 5/4 if still tight) */
-    gap: 6px;                               /* spacing between tiles */
+    grid-template-columns: repeat(6, 1fr);   /* KNOB A: columns per row (6 = small tiles) */
+    gap: 6px;                                 /* KNOB B: spacing between tiles */
+    min-width: 0;                             /* contain width */
   }
 
-  /* Main size knobs for mobile tiles */
+  /* Square tiles, compact content */
   .tile{
     aspect-ratio: 1 / 1;
     width: 100%;
-    padding: 4px;         /* smaller padding = smaller visible content */
+    padding: 4px;                             /* KNOB C: tile padding (smaller = smaller visible content) */
     margin: 0;
-    gap: 4px;
+    gap: 4px;                                 /* KNOB D: internal spacing */
+    overflow: hidden;                         /* avoid bleed */
   }
-  .rank{ width: 24px; height: 24px; font-size: 11px; }
-  .name{ font-size: 11px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sub{ display: none; }
 
-  /* Hide hover tooltip on touch so taps feel clean */
+  /* Let inner content shrink instead of pushing width */
+  .tile > div{ min-width: 0; }
+
+  /* Compact text and badge */
+  .rank{ width: 24px; height: 24px; font-size: 11px; }   /* KNOB E: badge size */
+  .name{
+    font-size: 11px;                           /* KNOB F: name font */
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .sub{ display: none; }                       /* hide subline for space */
+
+  /* Smaller legend on mobile */
+  .legend{
+    gap: 8px;
+    font-size: 12px;                           /* KNOB G: legend text */
+    line-height: 1.1;
+  }
+  .legend .dot{
+    width: 10px !important; height: 10px !important;     /* KNOB H: legend dot size */
+  }
+
+  /* Tooltips off on touch devices for clean tapping */
   .tooltip{ display: none !important; }
 }
 
-/* Auto-adjust for narrow phones if needed */
+/* Auto-scale for narrower phones: fewer columns -> bigger tiles */
 @media (max-width: 540px){
-  .column .list{ grid-template-columns: repeat(5, 1fr); } /* 5 per row */
+  .column .list{ grid-template-columns: repeat(5, 1fr); } /* KNOB A fallback */
 }
 @media (max-width: 420px){
-  .column .list{ grid-template-columns: repeat(4, 1fr); } /* 4 per row */
+  .column .list{ grid-template-columns: repeat(4, 1fr); } /* KNOB A fallback */
 }
 
-
-
-
-
-
-    @media (max-width: 900px){
-  .inline-desc{ display: none; font-size: 11px; color: var(--muted); margin-top: 2px; }
+/* Optional: inline peek text under tapped tile on mobile */
+@media (max-width: 900px){
+  .inline-desc{
+    display: none;
+    font-size: 11px;                           /* KNOB I: inline description font */
+    color: var(--muted);
+    margin-top: 2px;
+  }
   .tile.open .inline-desc{ display: block; }
 }
 
