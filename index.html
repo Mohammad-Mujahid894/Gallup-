@@ -208,6 +208,15 @@
 #stackLegend{ display:flex; flex-wrap: wrap; gap:8px; min-width:0; }
 html, body{ overflow-x: hidden; }
 .container, #gallupStrengths{ max-width: 100%; }
+/* Make the DNA bar scale, but never exceed a nice compact width on desktop */
+#svgBarWrap{
+  display: flex;              /* center it */
+  justify-content: center;
+}
+#svgBarWrap svg{
+  width: min(100%, 520px);    /* cap width on big screens */
+  height: auto;
+}
 
 
 
