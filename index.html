@@ -334,81 +334,6 @@ html, body{ overflow-x: hidden; }
 
 
 
-    /* Glassy tabs bar */
-.tabs{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0 16px 0;
-}
-
-.tab{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 14px;
-
-  color: #eaf2ff;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.2px;
-
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 10px 30px rgba(2,8,23,0.45);
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  cursor: pointer;
-  transition: background .15s ease, border-color .15s ease, transform .12s ease, box-shadow .12s ease, color .15s ease;
-}
-
-.tab .dot{
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.tab:hover{
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.20);
-  box-shadow: 0 14px 40px rgba(2,8,23,0.6);
-}
-
-.tab.active{
-  background: rgba(255,255,255,0.14);
-  border-color: rgba(255,255,255,0.28);
-  box-shadow: 0 16px 42px rgba(2,8,23,0.65);
-}
-
-/* subtle colored glow by domain */
-.tab.active[data-domain="EXECUTING"]{ box-shadow: 0 16px 42px rgba(139,97,255,0.45); }
-.tab.active[data-domain="INFLUENCING"]{ box-shadow: 0 16px 42px rgba(255,155,63,0.45); }
-.tab.active[data-domain="RELATIONSHIP"]{ box-shadow: 0 16px 42px rgba(58,160,255,0.45); }
-.tab.active[data-domain="STRATEGIC"]{ box-shadow: 0 16px 42px rgba(56,208,122,0.45); }
-
-.tab.clear{
-  font-weight: 600;
-  opacity: 0.9;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-.tab.clear:hover{
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.18);
-}
-
-@media (max-width: 900px){
-  .tabs{ gap: 8px; }
-  .tab{ padding: 8px 12px; font-size: 12px; }
-  .tab .dot{ width: 8px; height: 8px; }
-}
-
-
 
     
   </style>
@@ -427,26 +352,7 @@ html, body{ overflow-x: hidden; }
       <button class="btn" id="top5">Highlight Top 5</button>
       <div style="flex:1"></div>
     </div>
-<!-- Glassy domain tabs -->
-<div class="tabs">
-  <button class="tab" data-domain="EXECUTING">
-    <span class="dot domain-executing"></span>
-    Executing
-  </button>
-  <button class="tab" data-domain="INFLUENCING">
-    <span class="dot domain-influencing"></span>
-    Influencing
-  </button>
-  <button class="tab" data-domain="RELATIONSHIP">
-    <span class="dot domain-relationship"></span>
-    Relationship Building
-  </button>
-  <button class="tab" data-domain="STRATEGIC">
-    <span class="dot domain-strategic"></span>
-    Strategic Thinking
-  </button>
-  <button class="tab clear" data-domain="ALL">Show All</button>
-</div>
+
     <div id="svgBarWrap" style="margin:18px 0;"></div>
     
     <div id="gallupStrengths">
@@ -915,42 +821,6 @@ if (window.matchMedia('(max-width: 900px)').matches){
 
 
 
-
-
-
-  // Glass tabs behavior
-const tabs = d3.selectAll('.tab');
-tabs.on('click', function(){
-  const btn = d3.select(this);
-  const domain = btn.attr('data-domain');
-
-  // UI
-  d3.selectAll('.tab').classed('active', false);
-  if(domain !== 'ALL') btn.classed('active', true);
-
-  if(domain === 'ALL'){
-    clearAllHighlights();
-    d3.selectAll('.tile').style('opacity', 1).classed('muted', false);
-    d3.select('#details').html('<h2>Click any strength to see details</h2>');
-    return;
-  }
-
-  // Highlight this domain
-  highlightDomain(domain);
-
-  // Emphasize tiles in domain
-  d3.selectAll('.tile')
-    .style('opacity', t => t && t.domain === domain ? 1 : 0.25);
-
-  // Small hint in details
-  const domInfo = domainOrder.find(d => d.key === domain);
-  if(domInfo){
-    d3.select('#details').html(`
-      <h2 style="color:${domInfo.color}">${domInfo.label}</h2>
-      <p style="color:var(--muted)">Showing strengths in this domain. Tap a tile for details.</p>
-    `);
-  }
-});
 
 </script>
 </body>
