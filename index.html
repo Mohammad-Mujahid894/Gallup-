@@ -9,25 +9,34 @@
 
   <style>
     :root{
-      --bg: #071026;
-      --card: rgba(255,255,255,0.04);
-      --muted: #9fb2d8;
-      --glass: rgba(255,255,255,0.04);
-      --radius: 14px;
-      --shadow: 0 18px 40px rgba(2,8,23,0.6);
-      --gap: 14px;
-      --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --bg:#04060b; --fg:#eaf2ff; --muted:#9fb2d8; --glass:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.12);
+      --radius:18px; --shadow:0 30px 80px rgba(0,0,0,.6);
     }
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:var(--font-sans);
-      background: linear-gradient(180deg, #051022 0%, var(--bg) 100%);
-      color: #eaf2ff;
-      padding:28px;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+    html,body{height:100%}
+body {
+  margin: 0;
+  color: var(--fg);
+  background: #04060b;   /* keep only the dark base color, no cloudy gradient */
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  overflow-x: hidden;
+}
+    /* ===== LAYERS ===== */
+    .layer{position:fixed; inset:0; pointer-events:none}
+    #stars1,#stars2,#stars3{z-index:-3}
+#nebula {
+  z-index: -2;
+  filter: blur(40px) saturate(120%);
+  background:
+    radial-gradient(40% 40% at 15% 20%, rgba(122,162,255,.30), transparent 70%),
+    radial-gradient(35% 35% at 85% 15%, rgba(79,240,176,.25), transparent 70%),
+    radial-gradient(50% 50% at 60% 80%, rgba(138,122,255,.22), transparent 70%),
+    radial-gradient(30% 30% at 20% 85%, rgba(255,200,120,.18), transparent 70%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  animation: drift 24s ease-in-out infinite alternate;
+}
+    @keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-2%,0)}}
 
     .container{
       max-width:1100px;
@@ -383,6 +392,125 @@ html, body{ overflow-x: hidden; }
     <div class="tooltip" id="tooltip"></div>
   </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+    /* ========= Parallax starfields (3 layers for depth) ========= */
+    const DPR = Math.min(2, window.devicePixelRatio || 1);
+    const layers = [
+      { id: 'stars1', count: 200, speed: 0.15, size: 1.0 }, // far
+      { id: 'stars2', count: 140, speed: 0.35, size: 1.6 }, // mid
+      { id: 'stars3', count: 90,  speed: 0.65, size: 2.2 }  // near
+    ];
+
+    function Starfield(layer){
+      const cvs = document.getElementById(layer.id); const ctx = cvs.getContext('2d');
+      let w, h, stars=[]; let mx=0, my=0; // parallax
+      function resize(){ w = cvs.width = innerWidth * DPR; h = cvs.height = innerHeight * DPR; cvs.style.width = innerWidth+'px'; cvs.style.height = innerHeight+'px';
+        stars = Array.from({length: layer.count}, ()=>({ x: Math.random()*w, y: Math.random()*h, a: Math.random()*0.7+0.2 })); }
+      resize(); addEventListener('resize', resize);
+      addEventListener('mousemove', (e)=>{ mx = (e.clientX/innerWidth - .5); my = (e.clientY/innerHeight - .5); });
+      function draw(){ ctx.clearRect(0,0,w,h); ctx.fillStyle = '#fff';
+        for(const s of stars){ const px = s.x + mx*20*layer.speed; const py = s.y + my*20*layer.speed; ctx.globalAlpha = s.a; ctx.fillRect(px, py, layer.size*DPR, layer.size*DPR); }
+        requestAnimationFrame(draw); }
+      draw();
+      return {ctx, get size(){return {w,h}}, pushMeteor};
+
+      function pushMeteor(x,y,vx,vy){ // gradient trail line
+        const grad = ctx.createLinearGradient(x,y, x-vx*14, y-vy*14);
+        grad.addColorStop(0,'rgba(255,255,255,.95)'); grad.addColorStop(1,'rgba(122,162,255,0)');
+        ctx.strokeStyle = grad; ctx.lineWidth = 1.5*DPR; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-vx*14, y-vy*14); ctx.stroke();
+      }
+    }
+    const fields = layers.map(Starfield);
+
+    /* ========= Random shooting stars ========= */
+    const meteors = [];
+    function spawnMeteor(){ if(document.visibilityState !== 'visible') return; const {w,h} = fields[2].size;
+      meteors.push({ x: Math.random()*w, y: -20, vx: -6*DPR, vy: 6*DPR, life: 180 }); }
+    setInterval(spawnMeteor, 2200);
+    function drawMeteors(){ for(let i=meteors.length-1;i>=0;i--){ const m = meteors[i]; m.x += m.vx; m.y += m.vy; m.life -= 1; fields[2].pushMeteor(m.x,m.y,m.vx,m.vy); if(m.x < -50 || m.y > fields[2].size.h+50 || m.life<=0){ meteors.splice(i,1); } }
+      requestAnimationFrame(drawMeteors); }
+    drawMeteors();
+
+    /* ========= Glitter comet cursor ========= */
+    const sparks=[]; let last=0; function spawnSpark(x,y){ const s=document.createElement('span'); s.className='spark'; s.style.left=x+'px'; s.style.top=y+'px'; document.body.appendChild(s); sparks.push(s); if(sparks.length>40){ const old=sparks.shift(); old.remove(); } setTimeout(()=>s.remove(), 900); }
+    addEventListener('mousemove', (e)=>{ if(matchMedia('(pointer:fine)').matches) { const now=performance.now(); if(now-last>12){ spawnSpark(e.clientX, e.clientY); last=now; } } });
+
+    /* ========= 3D Hover Tilt ========= */
+    const tilts = [...document.querySelectorAll('.tilt')];
+    tilts.forEach(el=>{
+      el.addEventListener('mousemove', (e)=>{ const r = el.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; const y = (e.clientY - r.top) / r.height; const rx = (0.5 - y) * 10; const ry = (x - 0.5) * 10; el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; });
+      el.addEventListener('mouseleave', ()=>{ el.style.transform = 'rotateX(0deg) rotateY(0deg)'; });
+    });
+
+
+    /* ========= Reduce motion toggle ========= */
+    let motionReduced = false; function toggleMotion(){ motionReduced = !motionReduced; document.body.style.setProperty('animation-play-state', motionReduced ? 'paused' : 'running'); }
+    window.toggleMotion = toggleMotion;
+  </script>
+  <script>
+  function goHome() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+    // Counter animation
+const counters = document.querySelectorAll('.counter');
+const speed = 200; // smaller = faster
+
+const animateCounters = (entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const counter = entry.target;
+
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const current = +counter.innerText;
+
+        const increment = Math.ceil(target / speed);
+
+        if (current < target) {
+          counter.innerText = current + increment;
+          setTimeout(updateCount, 20);
+        } else {
+          counter.innerText = target;
+        }
+      };
+
+      updateCount();
+      observer.unobserve(counter);
+    }
+  });
+};
+
+const observer = new IntersectionObserver(animateCounters, { threshold: 0.3 });
+counters.forEach(counter => observer.observe(counter));
+</script>
+    <script>
+const entries = document.querySelectorAll('.entry');
+const stars = document.querySelectorAll('.star');
+
+window.addEventListener('scroll', () => {
+  entries.forEach((entry, i) => {
+    const rect = entry.getBoundingClientRect();
+    if (rect.top >= 100 && rect.top < window.innerHeight / 2) {
+      entries.forEach(e => e.classList.remove('active'));
+      stars.forEach(s => s.classList.remove('active'));
+      entry.classList.add('active');
+      stars[i].classList.add('active');
+    }
+  });
+});
+</script>
 <script>
 /* ============================
    DATA: 34 strengths with domains and short descriptions
