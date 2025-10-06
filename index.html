@@ -358,6 +358,17 @@ html, body{ overflow-x: hidden; }
   </style>
 </head>
 <body>
+
+  <!-- ===== BACKGROUND LAYERS ===== -->
+  <canvas id="stars1" class="layer" aria-hidden="true"></canvas>
+  <canvas id="stars2" class="layer" aria-hidden="true"></canvas>
+  <canvas id="stars3" class="layer" aria-hidden="true"></canvas>
+  <div id="nebula" class="layer" aria-hidden="true"></div>
+
+
+
+
+  
   <div class="container" id="app">
     <header class="title">
       <div>
@@ -952,11 +963,7 @@ function barHoverOnly(d){
   }
 }
 
-  info.append('div').attr('class','inline-desc').text(d => d.short);
-if (window.matchMedia('(max-width: 900px)').matches){
-  d3.selectAll('.tile').classed('open', false);
-  d3.select(this).classed('open', true);
-}
+
 </script>
   <!-- Mobile modal popup -->
 <div id="mobileModal" class="mobile-modal">
