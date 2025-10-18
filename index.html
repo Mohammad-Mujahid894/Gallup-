@@ -915,12 +915,12 @@ function highlightRank(rank){
   d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
   // Stackbar segments
   const strength = strengths.find(s => s.rank === rank);
-  if(strength){
-    d3.selectAll('.stack-seg')
-      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
-      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
-      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
-  }
+if(strength){
+  d3.selectAll('.stack-seg')
+    .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+    .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+    .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+}
 }
 function highlightDomain(domainKey){
   // tiles by domain
@@ -1135,13 +1135,14 @@ function barHoverOnly(d){
     .classed('muted', true);
 
   // Highlight stackbar
-  const strength = strengths.find(s => s.rank === d.rank);
-  if(strength){
-    d3.selectAll('.stack-seg')
-      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
-      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
-      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
-  }
+const strength = strengths.find(s => s.rank === d.rank);
+if(strength){
+  d3.selectAll('.stack-seg')
+    .attr('opacity', s => (s && s.key === strength.domain) ? 1 : 0.25)
+    .attr('stroke',  s => (s && s.key === strength.domain) ? '#fff' : null)
+    .attr('stroke-width', s => (s && s.key === strength.domain) ? 2 : null);
+}
+
 }
 
 
