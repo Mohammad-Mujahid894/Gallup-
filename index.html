@@ -390,81 +390,84 @@ html, body{ overflow-x: hidden; }
 
 
 
-
-
-
-
-
-/* ====== Strength Blend Section ====== */
-.strength-blends {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  padding: 80px 20px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+.strengths-full {
+  padding: 100px 20px;
+  background: #0e1013;
+  color: #e8e8e8;
 }
-.blend-title {
-  font-size: 26px;
+.section-title {
   text-align: center;
-  margin-bottom: 8px;
-  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
-.blend-subtitle {
+.section-subtitle {
   text-align: center;
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 40px;
+  color: #9aa0a6;
+  margin-bottom: 60px;
+  font-size: 15px;
 }
-.blend-card {
-  background: rgba(255,255,255,0.03);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.05);
-  padding: 28px;
-  margin-bottom: 28px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-  transition: transform .3s ease, box-shadow .3s ease;
-}
-.blend-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-}
-.blend-header {
+
+.strength-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 60px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 0 25px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.blend-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+.strength-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+.domain-tag {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 20px 8px;
+  font-weight: 600;
   color: #fff;
+  min-width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
-.dna-line {
+
+/* Domain colors */
+.relator .domain-tag { background: #3aa0ff; } /* Relationship Building */
+.deliberative .domain-tag { background: #8b61ff; } /* Executing */
+.learner .domain-tag { background: #38d07a; } /* Strategic Thinking */
+.intellection .domain-tag { background: #2fc083; } /* Strategic Thinking */
+.input .domain-tag { background: #25a66d; } /* Strategic Thinking */
+
+.strength-content {
+  padding: 30px;
   flex: 1;
-  height: 6px;
-  background: repeating-linear-gradient(
-    to right,
-    #3aa0ff 0px,
-    #3aa0ff 6px,
-    transparent 6px,
-    transparent 14px
-  );
-  border-radius: 8px;
-  opacity: 0.7;
 }
-.blend-pairs div {
-  margin-bottom: 14px;
+.strength-content h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
-.blend-pairs .pair {
-  display: block;
-  font-weight: 700;
-  color: #38d07a;
-  letter-spacing: 0.3px;
+.strength-content h3 {
+  font-size: 16px;
+  margin-top: 18px;
+  margin-bottom: 6px;
+  color: #a8b2bd;
 }
-.blend-pairs p {
+.strength-content ul {
+  margin-left: 20px;
+  list-style: disc;
+}
+.strength-content p, .strength-content li {
   font-size: 14px;
-  color: var(--muted);
-  margin: 4px 0 10px 0;
-  line-height: 1.5;
+  color: #d3d6da;
+  line-height: 1.6;
 }
 
 
@@ -472,68 +475,6 @@ html, body{ overflow-x: hidden; }
 
 
 
-
-
-
-
-
-
-
-
-    /* ===== Animated DNA lines by domain ===== */
-.dna-line {
-  flex: 1;
-  height: 6px;
-  border-radius: 8px;
-  background-size: 40px 100%;
-  background-repeat: repeat-x;
-  animation: dnaScroll 4s linear infinite;
-  opacity: 0.8;
-}
-
-/* Base animation: diagonal stripes moving right-to-left */
-@keyframes dnaScroll {
-  from { background-position: 0 0; }
-  to   { background-position: -40px 0; }
-}
-
-/* Domain color variations */
-.dna-rel {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #3aa0ff 0px,
-    #3aa0ff 8px,
-    transparent 8px,
-    transparent 20px
-  );
-}
-.dna-exe {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #8b61ff 0px,
-    #8b61ff 8px,
-    transparent 8px,
-    transparent 20px
-  );
-}
-.dna-strat {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #38d07a 0px,
-    #38d07a 8px,
-    transparent 8px,
-    transparent 20px
-  );
-}
-.dna-infl {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #ff9b3f 0px,
-    #ff9b3f 8px,
-    transparent 8px,
-    transparent 20px
-  );
-}
 
 
 
@@ -626,83 +567,111 @@ html, body{ overflow-x: hidden; }
 
 
 
-  <section id="strength-blends" class="strength-blends">
-  <div class="container">
-    <h1 class="blend-title">🧬 How My Top 5 Strengths Blend Together</h1>
-    <p class="blend-subtitle">Each strength works best when it complements the others — here’s how they interact.</p>
+<section id="strengths-full" class="strengths-full">
+  <h1 class="section-title">✨ My CliftonStrengths Top 5</h1>
+  <p class="section-subtitle">From the official Gallup CliftonStrengths® report — uniquely reflecting how I think, work, and connect.</p>
 
-    <!-- RELATOR -->
-    <div class="blend-card">
-      <div class="blend-header">
-        <div class="dna-line dna-rel"></div> 
-        <h2>Relator</h2>
-      </div>
-      <div class="blend-pairs">
-        <div><span class="pair">RELATOR + DELIBERATIVE</span><p>You trust carefully and build deep bonds only with people you truly know well.</p></div>
-        <div><span class="pair">RELATOR + LEARNER</span><p>You keep long friendships alive by constantly discovering new things about your close circle.</p></div>
-        <div><span class="pair">RELATOR + INTELLECTION</span><p>You balance reflection with connection — deep thoughts, but never at the cost of your friends.</p></div>
-        <div><span class="pair">RELATOR + INPUT</span><p>You collect insights and experiences from your relationships and share them generously.</p></div>
-      </div>
+  <!-- RELATOR -->
+  <div class="strength-item relator">
+    <div class="domain-tag">RELATIONSHIP BUILDING</div>
+    <div class="strength-content">
+      <h2>Relator®</h2>
+      <h3>What Is Relator?</h3>
+      <p>People strong in Relator talents enjoy close relationships and find deep satisfaction in working hard with friends toward a goal. They focus on trust, connection, and mutual growth.</p>
+
+      <h3>Why My Relator Is Unique</h3>
+      <p>I build deep relationships and prefer authenticity over surface-level interactions. My friends trust me to see things from a broader perspective — I often share insights I discover through reading or observation. I care more about quality of friendships than quantity.</p>
+
+      <h3>Apply My Relator To Succeed</h3>
+      <ul>
+        <li>Spend one-on-one time with people who matter to me.</li>
+        <li>Help colleagues see how strong relationships lead to smoother teamwork.</li>
+        <li>Express gratitude and warmth — my honesty builds trust in work and life.</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- DELIBERATIVE -->
-    <div class="blend-card">
-      <div class="blend-header">
-        <div class="dna-line dna-exe"></div>  
-        <h2>Deliberative</h2>
-      </div>
-      <div class="blend-pairs">
-        <div><span class="pair">DELIBERATIVE + RELATOR</span><p>You build trust slowly, evaluating relationships with care before committing deeply.</p></div>
-        <div><span class="pair">DELIBERATIVE + LEARNER</span><p>You explore new topics thoughtfully, giving each idea enough time to mature before acting.</p></div>
-        <div><span class="pair">DELIBERATIVE + INTELLECTION</span><p>Your reflection enhances judgment — you think things through before making key decisions.</p></div>
-        <div><span class="pair">DELIBERATIVE + INPUT</span><p>You gather reliable data and resources to reduce risk and make confident choices.</p></div>
-      </div>
+  <!-- DELIBERATIVE -->
+  <div class="strength-item deliberative">
+    <div class="domain-tag">EXECUTING</div>
+    <div class="strength-content">
+      <h2>Deliberative®</h2>
+      <h3>What Is Deliberative?</h3>
+      <p>People strong in Deliberative talents take serious care in making decisions. They identify risks, analyze options, and act with caution — prioritizing correctness over speed.</p>
+
+      <h3>Why My Deliberative Is Unique</h3>
+      <p>I bring thoughtfulness to every decision — whether reconciling payments or analyzing exceptions in O2C work. I pause before I act, ensuring my choices are clear and correct.</p>
+
+      <h3>Apply My Deliberative To Succeed</h3>
+      <ul>
+        <li>Think through pros and cons before every major decision.</li>
+        <li>Be the calm, analytical voice in high-pressure situations.</li>
+        <li>Use my precision to set quality standards in process tasks.</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- LEARNER -->
-    <div class="blend-card">
-      <div class="blend-header">
-        <div class="dna-line dna-strat"></div> 
-        <h2>Learner</h2>
-      </div>
-      <div class="blend-pairs">
-        <div><span class="pair">LEARNER + RELATOR</span><p>Your friendships grow deeper as you continue discovering new layers in people you already know.</p></div>
-        <div><span class="pair">LEARNER + DELIBERATIVE</span><p>You absorb knowledge but always with thoughtful evaluation — you learn smart, not fast.</p></div>
-        <div><span class="pair">LEARNER + INTELLECTION</span><p>You are a student of both the world around you and your inner thoughts.</p></div>
-        <div><span class="pair">LEARNER + INPUT</span><p>You love learning and collecting — making you a natural teacher and lifelong student.</p></div>
-      </div>
+  <!-- LEARNER -->
+  <div class="strength-item learner">
+    <div class="domain-tag">STRATEGIC THINKING</div>
+    <div class="strength-content">
+      <h2>Learner®</h2>
+      <h3>What Is Learner?</h3>
+      <p>People strong in Learner talents constantly seek improvement. The joy lies not just in knowledge, but in the journey from ignorance to mastery.</p>
+
+      <h3>Why My Learner Is Unique</h3>
+      <p>I thrive on continuous learning — whether mastering Power BI, understanding ICMAI concepts, or automating O2C workflows. I love experimenting, revising, and growing through every challenge.</p>
+
+      <h3>Apply My Learner To Succeed</h3>
+      <ul>
+        <li>Study new finance tech tools and apply them in real work scenarios.</li>
+        <li>Regularly challenge myself to explore complex concepts and simplify them for others.</li>
+        <li>Stay curious — learning keeps me adaptable and relevant.</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- INTELLECTION -->
-    <div class="blend-card">
-      <div class="blend-header">
-        <div class="dna-line dna-strat"></div>
-        <h2>Intellection</h2>
-      </div>
-      <div class="blend-pairs">
-        <div><span class="pair">INTELLECTION + RELATOR</span><p>You reflect deeply yet always value close companionship over solitude.</p></div>
-        <div><span class="pair">INTELLECTION + DELIBERATIVE</span><p>Your thinking and risk awareness combine to create sound, well-balanced judgments.</p></div>
-        <div><span class="pair">INTELLECTION + LEARNER</span><p>You continuously think, learn, and analyze — knowledge excites your mind.</p></div>
-        <div><span class="pair">INTELLECTION + INPUT</span><p>Your deep thoughts turn into practical, actionable insights that help others.</p></div>
-      </div>
+  <!-- INTELLECTION -->
+  <div class="strength-item intellection">
+    <div class="domain-tag">STRATEGIC THINKING</div>
+    <div class="strength-content">
+      <h2>Intellection®</h2>
+      <h3>What Is Intellection?</h3>
+      <p>People strong in Intellection talents are introspective. They love to think deeply, analyze patterns, and explore meaning — both within themselves and their surroundings.</p>
+
+      <h3>Why My Intellection Is Unique</h3>
+      <p>I constantly reflect — on my performance, workflows, and relationships. I enjoy discussions that challenge logic and spark new ideas. My thoughts often lead to practical solutions in work processes.</p>
+
+      <h3>Apply My Intellection To Succeed</h3>
+      <ul>
+        <li>Block quiet time each day to think, plan, and recalibrate.</li>
+        <li>Collaborate with thoughtful people who stimulate my mind.</li>
+        <li>Use insights to improve systems and bring clarity to teams.</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- INPUT -->
-    <div class="blend-card">
-      <div class="blend-header">
-        <div class="dna-line dna-strat"></div>
-        <h2>Input</h2>
-      </div>
-      <div class="blend-pairs">
-        <div><span class="pair">INPUT + RELATOR</span><p>You treasure both information and people — storing ideas and human connections alike.</p></div>
-        <div><span class="pair">INPUT + DELIBERATIVE</span><p>You gather reliable data to prevent mistakes and guide thoughtful decisions.</p></div>
-        <div><span class="pair">INPUT + LEARNER</span><p>You collect learning resources everywhere — always ready to share knowledge.</p></div>
-        <div><span class="pair">INPUT + INTELLECTION</span><p>You transform complex thinking into clear, usable knowledge for real impact.</p></div>
-      </div>
+  <!-- INPUT -->
+  <div class="strength-item input">
+    <div class="domain-tag">STRATEGIC THINKING</div>
+    <div class="strength-content">
+      <h2>Input®</h2>
+      <h3>What Is Input?</h3>
+      <p>People strong in Input talents collect ideas, resources, and knowledge. They love gathering and organizing information for future use.</p>
+
+      <h3>Why My Input Is Unique</h3>
+      <p>I naturally store resources — from comment code guides to O2C reference sheets — to help others quickly. I read across multiple topics, building a mental library that helps me solve unusual problems.</p>
+
+      <h3>Apply My Input To Succeed</h3>
+      <ul>
+        <li>Develop a digital system to store insights, articles, and data.</li>
+        <li>Share useful tools with my team to make their work easier.</li>
+        <li>Be the go-to person for knowledge and practical solutions.</li>
+      </ul>
     </div>
-
   </div>
 </section>
+
 
 
 
@@ -1258,6 +1227,25 @@ function barHoverOnly(d){
 
 
 </script>
+
+
+
+
+  <script>
+const items = document.querySelectorAll('.strength-item');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+items.forEach(i => obs.observe(i));
+</script>
+
+
+
+
+
+
+
+  
   <!-- Mobile modal popup -->
 <div id="mobileModal" class="mobile-modal">
   <div class="mobile-modal-content">
