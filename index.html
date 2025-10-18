@@ -379,6 +379,102 @@ html, body{ overflow-x: hidden; }
 @media (min-width: 901px){
   .mobile-modal{ display: none !important; }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ====== Strength Blend Section ====== */
+.strength-blends {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding: 80px 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.blend-title {
+  font-size: 26px;
+  text-align: center;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.blend-subtitle {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+.blend-card {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.blend-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+}
+.blend-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.blend-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.dna-line {
+  flex: 1;
+  height: 6px;
+  background: repeating-linear-gradient(
+    to right,
+    #3aa0ff 0px,
+    #3aa0ff 6px,
+    transparent 6px,
+    transparent 14px
+  );
+  border-radius: 8px;
+  opacity: 0.7;
+}
+.blend-pairs div {
+  margin-bottom: 14px;
+}
+.blend-pairs .pair {
+  display: block;
+  font-weight: 700;
+  color: #38d07a;
+  letter-spacing: 0.3px;
+}
+.blend-pairs p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 4px 0 10px 0;
+  line-height: 1.5;
+}
+
+
+
+
+
+
+
+    
+    
   </style>
 </head>
 <body>
@@ -434,6 +530,115 @@ html, body{ overflow-x: hidden; }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section id="strength-blends" class="strength-blends">
+  <div class="container">
+    <h1 class="blend-title">🧬 How My Top 5 Strengths Blend Together</h1>
+    <p class="blend-subtitle">Each strength works best when it complements the others — here’s how they interact.</p>
+
+    <!-- RELATOR -->
+    <div class="blend-card">
+      <div class="blend-header">
+        <div class="dna-line"></div>
+        <h2>Relator</h2>
+      </div>
+      <div class="blend-pairs">
+        <div><span class="pair">RELATOR + DELIBERATIVE</span><p>You trust carefully and build deep bonds only with people you truly know well.</p></div>
+        <div><span class="pair">RELATOR + LEARNER</span><p>You keep long friendships alive by constantly discovering new things about your close circle.</p></div>
+        <div><span class="pair">RELATOR + INTELLECTION</span><p>You balance reflection with connection — deep thoughts, but never at the cost of your friends.</p></div>
+        <div><span class="pair">RELATOR + INPUT</span><p>You collect insights and experiences from your relationships and share them generously.</p></div>
+      </div>
+    </div>
+
+    <!-- DELIBERATIVE -->
+    <div class="blend-card">
+      <div class="blend-header">
+        <div class="dna-line"></div>
+        <h2>Deliberative</h2>
+      </div>
+      <div class="blend-pairs">
+        <div><span class="pair">DELIBERATIVE + RELATOR</span><p>You build trust slowly, evaluating relationships with care before committing deeply.</p></div>
+        <div><span class="pair">DELIBERATIVE + LEARNER</span><p>You explore new topics thoughtfully, giving each idea enough time to mature before acting.</p></div>
+        <div><span class="pair">DELIBERATIVE + INTELLECTION</span><p>Your reflection enhances judgment — you think things through before making key decisions.</p></div>
+        <div><span class="pair">DELIBERATIVE + INPUT</span><p>You gather reliable data and resources to reduce risk and make confident choices.</p></div>
+      </div>
+    </div>
+
+    <!-- LEARNER -->
+    <div class="blend-card">
+      <div class="blend-header">
+        <div class="dna-line"></div>
+        <h2>Learner</h2>
+      </div>
+      <div class="blend-pairs">
+        <div><span class="pair">LEARNER + RELATOR</span><p>Your friendships grow deeper as you continue discovering new layers in people you already know.</p></div>
+        <div><span class="pair">LEARNER + DELIBERATIVE</span><p>You absorb knowledge but always with thoughtful evaluation — you learn smart, not fast.</p></div>
+        <div><span class="pair">LEARNER + INTELLECTION</span><p>You are a student of both the world around you and your inner thoughts.</p></div>
+        <div><span class="pair">LEARNER + INPUT</span><p>You love learning and collecting — making you a natural teacher and lifelong student.</p></div>
+      </div>
+    </div>
+
+    <!-- INTELLECTION -->
+    <div class="blend-card">
+      <div class="blend-header">
+        <div class="dna-line"></div>
+        <h2>Intellection</h2>
+      </div>
+      <div class="blend-pairs">
+        <div><span class="pair">INTELLECTION + RELATOR</span><p>You reflect deeply yet always value close companionship over solitude.</p></div>
+        <div><span class="pair">INTELLECTION + DELIBERATIVE</span><p>Your thinking and risk awareness combine to create sound, well-balanced judgments.</p></div>
+        <div><span class="pair">INTELLECTION + LEARNER</span><p>You continuously think, learn, and analyze — knowledge excites your mind.</p></div>
+        <div><span class="pair">INTELLECTION + INPUT</span><p>Your deep thoughts turn into practical, actionable insights that help others.</p></div>
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="blend-card">
+      <div class="blend-header">
+        <div class="dna-line"></div>
+        <h2>Input</h2>
+      </div>
+      <div class="blend-pairs">
+        <div><span class="pair">INPUT + RELATOR</span><p>You treasure both information and people — storing ideas and human connections alike.</p></div>
+        <div><span class="pair">INPUT + DELIBERATIVE</span><p>You gather reliable data to prevent mistakes and guide thoughtful decisions.</p></div>
+        <div><span class="pair">INPUT + LEARNER</span><p>You collect learning resources everywhere — always ready to share knowledge.</p></div>
+        <div><span class="pair">INPUT + INTELLECTION</span><p>You transform complex thinking into clear, usable knowledge for real impact.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 
 
