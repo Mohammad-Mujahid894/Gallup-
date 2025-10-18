@@ -473,6 +473,70 @@ html, body{ overflow-x: hidden; }
 
 
 
+
+
+
+
+
+
+
+    /* ===== Animated DNA lines by domain ===== */
+.dna-line {
+  flex: 1;
+  height: 6px;
+  border-radius: 8px;
+  background-size: 40px 100%;
+  background-repeat: repeat-x;
+  animation: dnaScroll 4s linear infinite;
+  opacity: 0.8;
+}
+
+/* Base animation: diagonal stripes moving right-to-left */
+@keyframes dnaScroll {
+  from { background-position: 0 0; }
+  to   { background-position: -40px 0; }
+}
+
+/* Domain color variations */
+.dna-rel {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #3aa0ff 0px,
+    #3aa0ff 8px,
+    transparent 8px,
+    transparent 20px
+  );
+}
+.dna-exe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #8b61ff 0px,
+    #8b61ff 8px,
+    transparent 8px,
+    transparent 20px
+  );
+}
+.dna-strat {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #38d07a 0px,
+    #38d07a 8px,
+    transparent 8px,
+    transparent 20px
+  );
+}
+.dna-infl {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #ff9b3f 0px,
+    #ff9b3f 8px,
+    transparent 8px,
+    transparent 20px
+  );
+}
+
+
+
     
     
   </style>
@@ -570,7 +634,7 @@ html, body{ overflow-x: hidden; }
     <!-- RELATOR -->
     <div class="blend-card">
       <div class="blend-header">
-        <div class="dna-line"></div>
+        <div class="dna-line dna-rel"></div> 
         <h2>Relator</h2>
       </div>
       <div class="blend-pairs">
@@ -584,7 +648,7 @@ html, body{ overflow-x: hidden; }
     <!-- DELIBERATIVE -->
     <div class="blend-card">
       <div class="blend-header">
-        <div class="dna-line"></div>
+        <div class="dna-line dna-exe"></div>  
         <h2>Deliberative</h2>
       </div>
       <div class="blend-pairs">
@@ -598,7 +662,7 @@ html, body{ overflow-x: hidden; }
     <!-- LEARNER -->
     <div class="blend-card">
       <div class="blend-header">
-        <div class="dna-line"></div>
+        <div class="dna-line dna-strat"></div> 
         <h2>Learner</h2>
       </div>
       <div class="blend-pairs">
@@ -612,7 +676,7 @@ html, body{ overflow-x: hidden; }
     <!-- INTELLECTION -->
     <div class="blend-card">
       <div class="blend-header">
-        <div class="dna-line"></div>
+        <div class="dna-line dna-strat"></div>
         <h2>Intellection</h2>
       </div>
       <div class="blend-pairs">
@@ -626,7 +690,7 @@ html, body{ overflow-x: hidden; }
     <!-- INPUT -->
     <div class="blend-card">
       <div class="blend-header">
-        <div class="dna-line"></div>
+        <div class="dna-line dna-strat"></div>
         <h2>Input</h2>
       </div>
       <div class="blend-pairs">
