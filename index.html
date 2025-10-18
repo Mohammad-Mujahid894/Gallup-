@@ -538,11 +538,6 @@ html, body{ overflow-x: hidden; }
 
     <div class="tooltip" id="tooltip"></div>
   </div>
-<!-- Mobile modal -->
-<div id="mobileModal" class="mobile-modal">
-  <span class="close-btn">&times;</span>
-  <div id="mobileModalBody" class="mobile-modal-content"></div>
-</div>
 
 
 
@@ -920,13 +915,12 @@ function highlightRank(rank){
   d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
   // Stackbar segments
   const strength = strengths.find(s => s.rank === rank);
-const strength = strengths.find(s => s.rank === d.rank);
-if(strength){
-  d3.selectAll('.stack-seg')
-    .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
-    .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
-    .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
-}
+  if(strength){
+    d3.selectAll('.stack-seg')
+      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+  }
 }
 function highlightDomain(domainKey){
   // tiles by domain
@@ -1141,16 +1135,14 @@ function barHoverOnly(d){
     .classed('muted', true);
 
   // Highlight stackbar
-const strength = strengths.find(s => s.rank === d.rank);
-const strength = strengths.find(s => s.rank === d.rank);
-if(strength){
-  d3.selectAll('.stack-seg')
-    .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
-    .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
-    .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+  const strength = strengths.find(s => s.rank === d.rank);
+  if(strength){
+    d3.selectAll('.stack-seg')
+      .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+      .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+      .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+  }
 }
-}
-
 
 
 
@@ -1336,7 +1328,8 @@ function renderRelatorDetailsNoTabs(strengths){
   wrap.html(html);
 }
 
-
+renderSplitBarcode(strengths);
+renderRelatorPlain(strengths);
 
 
 
@@ -1355,6 +1348,12 @@ function renderRelatorDetailsNoTabs(strengths){
 
 
   
-
+  <!-- Mobile modal popup -->
+<div id="mobileModal" class="mobile-modal">
+  <div class="mobile-modal-content">
+    <span class="close-btn">&times;</span>
+    <div id="mobileModalBody"></div>
+  </div>
+</div>
 </body>
 </html>
