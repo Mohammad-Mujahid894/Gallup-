@@ -399,6 +399,89 @@ html, body{ overflow-x: hidden; }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* Contained, responsive barcode */
+#fullBarcodeWrap, #fullBarcodeWrap svg{
+  width: 100%;
+  height: auto;
+  max-width: 560px;   /* cap so it doesn't stretch */
+}
+#fullBarcodeWrap{ margin:16px 0; }
+
+/* Relator details card */
+.relator-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-top: 12px;
+}
+.relator-header{
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+.relator-meta{
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+.relator-subtitle{
+  font-size: 15px;
+  margin: 10px 0 6px 0;
+}
+.relator-text{
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.relator-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:10px 0 8px 0;
+}
+.relator-tab{
+  padding:6px 10px;
+  font-size:12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color:#eaf2ff;
+}
+.relator-tab.active{
+  background: rgba(58,160,255,0.18);
+  border-color: rgba(58,160,255,0.35);
+}
+.relator-bullets{
+  margin:8px 0 0 16px;
+  padding:0;
+  list-style: disc;
+  color:#eaf2ff;
+  font-size:13px;
+}
+
+
+
+
     
     
   </style>
@@ -449,9 +532,6 @@ html, body{ overflow-x: hidden; }
     <div class="tooltip" id="tooltip"></div>
   </div>
 
-<!-- Top 5 deep-dive (appears after the main strengths section) -->
-<div id="top5Wrap"></div>
-<div id="top5Details"></div>
 
 
 
@@ -470,6 +550,11 @@ html, body{ overflow-x: hidden; }
 
 
 
+<!-- Full 34-bar DNA (contained) -->
+<div id="fullBarcodeWrap"></div>
+
+<!-- Relator deep-dive -->
+<div id="relatorDetails"></div>
 
 
 
@@ -1091,20 +1176,24 @@ function barHoverOnly(d){
 
 
 
-  function renderTop5Barcode(data) {
-  const top5 = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
+// ===== Full 34-barcode: all grey except rank 1 colored, responsive & contained =====
+function renderFull34BarcodeContained(data){
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
     RELATIONSHIP: "#3aa0ff",
     STRATEGIC: "#38d07a"
   };
+  const grey = "#778199";
+  const rail = "#bfbfbf";
 
   const svgWidth = 500, svgHeight = 60;
   const barWidth = 8, barHeight = 40, spacing = 12;
 
-  d3.select('#top5Wrap').html('');
-  const svg = d3.select('#top5Wrap')
+  const bars = data.slice().sort((a,b)=>a.rank-b.rank);
+
+  d3.select('#fullBarcodeWrap').html('');
+  const svg = d3.select('#fullBarcodeWrap')
     .append('svg')
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     .attr('preserveAspectRatio','xMidYMid meet');
@@ -1112,7 +1201,7 @@ function barHoverOnly(d){
   const g = svg.append('g').attr('transform','translate(0,10)');
 
   g.selectAll('rect')
-    .data(top5)
+    .data(bars)
     .enter()
     .append('rect')
       .attr('x', (d,i) => i * spacing)
@@ -1120,76 +1209,99 @@ function barHoverOnly(d){
       .attr('width', barWidth)
       .attr('height', barHeight)
       .attr('rx', 2)
-      .attr('fill', d => domainColors[d.domain] || '#ccc')
+      .attr('fill', d => d.rank === 1 ? (domainColors[d.domain] || '#3aa0ff') : grey)
       .attr('data-rank', d => d.rank)
       .style('cursor','pointer')
       .on('mouseover', (e,d) => barHoverOnly(d))
       .on('mouseout', () => clearAllHighlights())
-      .on('click', (e,d) => {
-        tileClick(e,d);
-        renderTop5Detail(d);
-      });
+      .on('click', (e,d) => tileClick(e,d));
 
-  // decorative rails to match your main barcode aesthetic
-  svg.append('line').attr('x1',0).attr('y1',5).attr('x2',56).attr('y2',5)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line').attr('x1',0).attr('y1',55).attr('x2',56).attr('y2',55)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line').attr('x1',56).attr('y1',5).attr('x2',116).attr('y2',55)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line').attr('x1',56).attr('y1',55).attr('x2',116).attr('y2',5)
-    .attr('stroke','#bfbfbf').attr('stroke-width',6).attr('stroke-linecap','round');
+  const totalSpan = (bars.length - 1) * spacing + barWidth;
+  svg.append('line').attr('x1',0).attr('y1',5).attr('x2',totalSpan).attr('y2',5)
+    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+  svg.append('line').attr('x1',0).attr('y1',55).attr('x2',totalSpan).attr('y2',55)
+    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 }
 
-function renderTop5Detail(d){
-  const domColor = domainOrder.find(x => x.key === d.domain)?.color || '#fff';
-  const el = d3.select('#top5Details');
+// ===== Relator details card (screenshot-like layout) =====
+function renderRelatorDetails(strengths){
+  const relator = strengths.find(s => s.rank === 1 && s.name === 'Relator');
+  if(!relator) return;
 
-  if(d.name === 'Relator'){
-    el.html(`
-      <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); border-radius:12px; padding:16px; box-shadow: var(--shadow)">
-        <h2 style="margin:0 0 8px 0; color:${domColor}">
-          Relationship Building • 1. Relator®
-        </h2>
+  const domColor = "#3aa0ff"; // Relationship Building color
+  const el = d3.select('#relatorDetails');
+  el.html(`
+    <div class="relator-card">
+      <!-- Head rail mimic -->
+      <div id="relatorRail" style="margin-bottom:10px;"></div>
 
-        <h3 style="margin:6px 0 6px 0; font-size:15px;">What is Relator?</h3>
-        <p style="color:var(--muted); font-size:13px; line-height:1.45;">
-          People exceptionally talented in Relator enjoy close relationships and find deep satisfaction working hard with trusted partners toward shared goals; it’s a Relationship Building theme that values authenticity and depth over breadth [web:2][web:24].
-        </p>
+      <div class="relator-meta">RELATIONSHIP BUILDING</div>
+      <h2 class="relator-header" style="color:${domColor}">1. Relator®</h2>
 
-        <h3 style="margin:12px 0 6px 0; font-size:15px;">Why your Relator is unique</h3>
-        <p style="color:var(--muted); font-size:13px; line-height:1.45;">
-          Relator strengthens team cohesion; paired with Deliberative, Learner, Intellection, and Input, it becomes thoughtful, well‑researched one‑to‑one collaboration others trust [web:2][web:3].
-        </p>
+      <h3 class="relator-subtitle">What is Relator?</h3>
+      <p class="relator-text">
+        People with strong Relator talents enjoy close, genuine relationships and gain energy from working hard with trusted partners toward shared goals; they value authenticity and depth over breadth and often prefer a smaller circle of strong ties [web:2][web:24].
+      </p>
 
-        <ul style="margin:8px 0 0 16px; padding:0; list-style:disc; color:#eaf2ff; font-size:13px;">
-          <li>Depth over breadth: invest in a few trusted contacts to deliver consistently together [web:2].</li>
-          <li>Mutual transparency: build durable trust by aligning goals, fears, and expectations [web:2].</li>
-          <li>Team glue: create social depth that holds people together during change and pressure [web:24].</li>
-        </ul>
-
-        <h3 style="margin:12px 0 6px 0; font-size:15px;">How to aim Relator (O2C, Cash App)</h3>
-        <ul style="margin:8px 0 0 16px; padding:0; list-style:disc; color:#eaf2ff; font-size:13px;">
-          <li>Anchor accounts: keep a consistent AR contact list and weekly cadence for faster remittance clarifications [web:3].</li>
-          <li>Trust pipelines: agree “working rules” (subject lines, comment codes, bank file formats) for one‑pass resolutions [web:2].</li>
-          <li>Buddy QA: pair on night shift to audit partial remits/NSFs; trust boosts speed and accuracy [web:24].</li>
-          <li>Mini‑SLA honesty: proactively message delays; credibility today keeps tomorrow’s lane clear [web:3].</li>
-        </ul>
+      <h3 class="relator-subtitle">Why Your Relator Is Unique</h3>
+      <div class="relator-tabs">
+        <span class="relator-tab active">Relator</span>
+        <span class="relator-tab">Deliberative</span>
+        <span class="relator-tab">Learner</span>
+        <span class="relator-tab">Intellection</span>
+        <span class="relator-tab">Input</span>
       </div>
-    `);
-  } else {
-    el.html(`
-      <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); border-radius:12px; padding:16px; box-shadow: var(--shadow)">
-        <h2 style="margin:0 0 8px 0; color:${domColor}">${d.rank}. ${d.name}</h2>
-        <p style="color:var(--muted); font-size:13px;">Details coming next.</p>
-      </div>
-    `);
-  }
+
+      <ul class="relator-bullets">
+        <li>Chances are good you are well‑read; friends seek your guidance, and your reading unlocks fresh ideas you share when useful [web:2][web:3].</li>
+        <li>Instinctively, you keep a small circle of close friends built on intimacy and trust; quality matters more than quantity [web:2][web:24].</li>
+        <li>By nature, you bond and work best with people who state their ambitions clearly, enabling authentic collaboration [web:2].</li>
+        <li>Because of your strengths, you’re most productive when allowed independence; unnecessary group work can hinder progress [web:3].</li>
+        <li>You are fond of and loyal to the people in your life; you thrive when others reciprocate your warmth and care [web:24].</li>
+      </ul>
+
+      <h3 class="relator-subtitle">Apply It (O2C Cash App)</h3>
+      <ul class="relator-bullets">
+        <li>Anchor accounts: maintain a consistent AR contact roster and a weekly cadence for fast remittance clarifications [web:3].</li>
+        <li>Trust pipelines: agree working rules (subject lines, comment codes, bank file formats) for one‑pass exception resolution [web:2].</li>
+        <li>Buddy QA on night shift: pair for partial remits/NSFs; depth of trust = speed and accuracy [web:24].</li>
+      </ul>
+    </div>
+  `);
+
+  // Draw a thin “DNA rail” at the top of the card for visual continuity
+  const railW = 560, railH = 24, barW = 6, barH = 16, spacing = 10;
+  const svg = d3.select('#relatorRail').append('svg')
+    .attr('viewBox', `0 0 ${railW} ${railH}`)
+    .attr('preserveAspectRatio','xMidYMid meet')
+    .style('width','100%').style('height','auto').style('max-width','560px');
+
+  // simple chevron ends
+  svg.append('line').attr('x1',6).attr('y1',railH/2).attr('x2',30).attr('y2',railH/2)
+    .attr('stroke','#bfbfbf').attr('stroke-width',3).attr('stroke-linecap','round');
+  svg.append('polyline')
+    .attr('points','6,12 16,6 16,18 6,12')
+    .attr('fill','none').attr('stroke','#bfbfbf').attr('stroke-width',3).attr('stroke-linejoin','round');
+
+  const group = svg.append('g').attr('transform','translate(40,4)');
+  const bars = Array.from({length: 34}).map((_,i)=>({rank:i+1}));
+  group.selectAll('rect')
+    .data(bars)
+    .enter()
+    .append('rect')
+      .attr('x', (d,i)=> i*spacing)
+      .attr('y', 0)
+      .attr('width', barW)
+      .attr('height', barH)
+      .attr('rx', 2)
+      .attr('fill', d => d.rank === 1 ? domColor : '#778199');
 }
 
-// After your initial renders, call:
-renderTop5Barcode(strengths);
-renderTop5Detail(strengths.find(s => s.rank === 1)); // auto-open Relator
+// ===== Initialize (call after your existing initial renders) =====
+// After renderTiles(strengths); renderCliftonSVGBar(strengths); renderStackBar(strengths); add:
+renderFull34BarcodeContained(strengths);
+renderRelatorDetails(strengths);
+
 
 </script>
 
