@@ -1211,21 +1211,22 @@ function renderFull34BarcodeContained(data){
   const grey = "#778199";
   const rail = "#bfbfbf";
 
-  const svgWidth = 700, svgHeight = 70;
-  const topY = 12, barTop = 18;
-  const barWidth = 8, barHeight = 40, spacing = 12;
+  const svgWidth = 640, svgHeight = 70;
+  const barTop = 18, barHeight = 38, barWidth = 8, spacing = 12;
+  const topY = 12;
 
+  // split
   const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
   const rightBars = data.filter(d => d.rank > 5).sort((a,b)=>a.rank-b.rank);
 
   const leftSpan = (leftBars.length - 1) * spacing + barWidth;
-  const leftStartX = 0;
-
   const diagWidth = 56;
-  const gap = 8;
-  const rightStartX = leftStartX + leftSpan + gap + diagWidth;
-
+  const gap = 10;
   const rightSpan = (rightBars.length - 1) * spacing + barWidth;
+  const totalWidth = leftSpan + diagWidth + rightSpan + gap;
+
+  const offsetX = (svgWidth - totalWidth) / 2;
+  const rightStartX = offsetX + leftSpan + diagWidth + gap;
 
   d3.select('#fullBarcodeWrap').html('');
   const svg = d3.select('#fullBarcodeWrap')
@@ -1233,47 +1234,46 @@ function renderFull34BarcodeContained(data){
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     .attr('preserveAspectRatio','xMidYMid meet');
 
-  // Left rails
+  // left rails
   svg.append('line')
-    .attr('x1', leftStartX).attr('y1', topY)
-    .attr('x2', leftStartX + leftSpan).attr('y2', topY)
+    .attr('x1', offsetX).attr('y1', topY)
+    .attr('x2', offsetX + leftSpan).attr('y2', topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line')
-    .attr('x1', leftStartX).attr('y1', svgHeight - topY)
-    .attr('x2', leftStartX + leftSpan).attr('y2', svgHeight - topY)
+    .attr('x1', offsetX).attr('y1', svgHeight - topY)
+    .attr('x2', offsetX + leftSpan).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // Left 5 bars
-  const gLeft = svg.append('g').attr('transform',`translate(${leftStartX},${barTop})`);
+  // left bars
+  const gLeft = svg.append('g').attr('transform',`translate(${offsetX},${barTop})`);
   gLeft.selectAll('rect')
     .data(leftBars)
     .enter()
     .append('rect')
-      .attr('x', (d,i)=> i*spacing)
-      .attr('y', 0)
-      .attr('width', barWidth)
-      .attr('height', barHeight)
-      .attr('rx', 2)
-      .attr('fill', d => d.rank === 1 ? (domainColors[d.domain] || '#3aa0ff') : grey)
-      .attr('data-rank', d => d.rank)
-      .style('cursor','pointer')
-      .on('mouseover', (e,d)=> barHoverOnly(d))
-      .on('mouseout', ()=> clearAllHighlights())
-      .on('click', (e,d)=> tileClick(e,d));
+    .attr('x', (d,i)=> i*spacing)
+    .attr('y', 0)
+    .attr('width', barWidth)
+    .attr('height', barHeight)
+    .attr('rx', 2)
+    .attr('fill', d => d.rank === 1 ? (domainColors[d.domain] || '#3aa0ff') : grey)
+    .attr('data-rank', d => d.rank)
+    .style('cursor','pointer')
+    .on('mouseover', (e,d)=> barHoverOnly(d))
+    .on('mouseout', ()=> clearAllHighlights())
+    .on('click', (e,d)=> tileClick(e,d));
 
-  // Diagonal X
-  const x1 = leftStartX + leftSpan + gap;
-  const x2 = x1 + diagWidth;
+  // diagonal X
+  const diagStart = offsetX + leftSpan;
   svg.append('line')
-    .attr('x1', x1).attr('y1', topY)
-    .attr('x2', x2).attr('y2', svgHeight - topY)
+    .attr('x1', diagStart).attr('y1', topY)
+    .attr('x2', diagStart + diagWidth).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line')
-    .attr('x1', x1).attr('y1', svgHeight - topY)
-    .attr('x2', x2).attr('y2', topY)
+    .attr('x1', diagStart).attr('y1', svgHeight - topY)
+    .attr('x2', diagStart + diagWidth).attr('y2', topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // Right rails
+  // right rails
   svg.append('line')
     .attr('x1', rightStartX).attr('y1', topY)
     .attr('x2', rightStartX + rightSpan).attr('y2', topY)
@@ -1283,24 +1283,25 @@ function renderFull34BarcodeContained(data){
     .attr('x2', rightStartX + rightSpan).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // Right 29 bars
+  // right bars
   const gRight = svg.append('g').attr('transform',`translate(${rightStartX},${barTop})`);
   gRight.selectAll('rect')
     .data(rightBars)
     .enter()
     .append('rect')
-      .attr('x', (d,i)=> i*spacing)
-      .attr('y', 0)
-      .attr('width', barWidth)
-      .attr('height', barHeight)
-      .attr('rx', 2)
-      .attr('fill', grey)
-      .attr('data-rank', d => d.rank)
-      .style('cursor','pointer')
-      .on('mouseover', (e,d)=> barHoverOnly(d))
-      .on('mouseout', ()=> clearAllHighlights())
-      .on('click', (e,d)=> tileClick(e,d));
+    .attr('x', (d,i)=> i*spacing)
+    .attr('y', 0)
+    .attr('width', barWidth)
+    .attr('height', barHeight)
+    .attr('rx', 2)
+    .attr('fill', grey)
+    .attr('data-rank', d => d.rank)
+    .style('cursor','pointer')
+    .on('mouseover', (e,d)=> barHoverOnly(d))
+    .on('mouseout', ()=> clearAllHighlights())
+    .on('click', (e,d)=> tileClick(e,d));
 }
+
 
 
 // ===== Relator details (no tabs, like your image) =====
@@ -1308,38 +1309,56 @@ function renderRelatorDetailsNoTabs(strengths){
   const relator = strengths.find(s => s.rank === 1 && s.name === 'Relator');
   if(!relator) return;
 
-  const domColor = "#3aa0ff"; // Relationship Building
+  const domColor = "#3aa0ff";
   const wrap = d3.select('#relatorDetails');
 
-  // Build the HTML once, minimal nodes, no heavy wrappers
   const html = `
-    <div style="max-width:720px;margin:16px auto;text-align:center;">
-      <div style="color:var(--muted);font-size:12px;letter-spacing:.4px;">RELATIONSHIP BUILDING</div>
-      <h2 style="color:${domColor};margin:4px 0 10px 0;font-size:22px;">1. Relator®</h2>
+    <div style="max-width:720px;margin:24px auto;text-align:left;">
+      <h2 style="color:${domColor};font-size:26px;margin-bottom:8px;">1. Relator<sup>®</sup></h2>
 
-      <h3 style="margin:12px 0 6px 0;font-size:16px;">What is Relator?</h3>
-      <p style="color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 10px 0;">
-        Relator talents describe a person’s attitude toward close relationships; people strong in Relator are drawn to those they already know, prefer depth over breadth, and gain energy from working hard with trusted friends toward shared goals [web:2].
+      <h3 style="font-size:15px;margin-top:10px;">What is Relator?</h3>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6;">
+        Relator talents describe a person’s attitude toward their relationships. People with strong Relator talents are drawn to those they already know.
+        They prefer depth over breadth and gain energy from working hard with trusted friends toward shared goals.
       </p>
 
-      <h3 style="margin:14px 0 6px 0;font-size:16px;">Why Your Relator Is Unique</h3>
-      <p style="color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 10px 0;">
-        These Strengths Insights are personalized based on your CliftonStrengths results [web:2].
+      <h3 style="font-size:15px;margin-top:18px;">Why Your Relator Is Unique</h3>
+      <p style="font-style:italic;color:var(--muted);font-size:13px;margin-bottom:10px;">
+        These Strengths Insights are personalized based on your CliftonStrengths results.
       </p>
 
-      <div style="max-width:720px;margin:0 auto;text-align:left;">
-        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Chances are good that you are a well‑read individual; friends seek your guidance, and something you’ve read often unlocks a new perspective for them [web:2].</p>
-        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Instinctively, you keep a small circle of close friends built on intimacy and trust; you focus on the preciousness of those ties more than on quantity [web:2].</p>
-        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• By nature, you bond with and work well with people who clearly state what they want to accomplish [web:2].</p>
-        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Because of your strengths, you’re most productive when allowed independence; unnecessary group work can hinder progress [web:3].</p>
-        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• It’s very likely you are fond of and devoted to the people in your life; you thrive when that warmth is reciprocated [web:24].</p>
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="background:${domColor};color:#fff;padding:6px 14px;border-radius:6px;font-size:13px;">Relator</div>
+        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Deliberative</div>
+        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Learner</div>
+        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Intellection</div>
+        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Input</div>
+      </div>
+
+      <!-- Insights -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Chances are good that you are a well-read individual. People whom you have befriended turn to you for guidance. You often help them see a situation or problem from a different perspective.
+        </div>
+        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Instinctively, you have a small number of close friends who share a foundation of intimacy and trust. You care less about how many friends you have and more about how precious those friends are.
+        </div>
+        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          By nature, you bond with and work well with people who tell you what they want to accomplish in life.
+        </div>
+        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Because of your strengths, you prefer independence; unnecessary group work can hinder progress.
+        </div>
+        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          It’s very likely you are fond of and devoted to the people in your life; you thrive when that warmth is reciprocated.
+        </div>
       </div>
     </div>
   `;
-
-  // Single DOM write
   wrap.html(html);
 }
+
 
 
 
