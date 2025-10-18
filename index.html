@@ -707,7 +707,7 @@ window.addEventListener('scroll', () => {
   // Ensure D3 and strengths are available
   document.addEventListener('DOMContentLoaded', function () {
     // 1) Top split barcode (compact version)
-    renderCliftonSVGBAR ? renderCliftonSVGBAR(strengths) : renderCliftonSVGBar(strengths);
+    renderCliftonSVGBar(strengths);
 
     // 2) Full 34-barcode with diagonal X in the contained wrapper
     renderFull34BarcodeContained(strengths);
@@ -966,19 +966,19 @@ const svg = d3.select('#stackbar').append('svg')
   .attr('width', null)
   .attr('height', null);
   let x = 0;
-counts.forEach(segment => {
-  const segW = Math.round((segment.count / total) * width);
-svg.append('rect')
-  .attr('x', x)
-  .attr('y', 0)
-  .attr('width', segW)
-  .attr('height', height)
-  .attr('fill', segment.color)
-  .attr('rx', 4)
-  .attr('class', 'stack-seg')
-  .append('title').text(`${segment.label}: ${segment.count}`);
-  x += segW; // advance x for next segment
-}); // <- close forEach properly
+svg.selectAll('rect')
+  .data(counts)
+  .enter()
+  .append('rect')
+    .attr('x', (d,i) => d3.sum(counts.slice(0,i), c => (c.count/total)*width))
+    .attr('y', 0)
+    .attr('width', d => (d.count / total) * width)
+    .attr('height', height)
+    .attr('fill', d => d.color)
+    .attr('rx', 4)
+    .attr('class', 'stack-seg')
+  .append('title')
+    .text(d => `${d.label}: ${d.count}`);
 
   // legend to right
   const legend = d3.select('#stackLegend').html('');
