@@ -403,73 +403,88 @@ html, body{ overflow-x: hidden; }
 
 
 
+/* Center + contain */
+.center-wrap{
+  width: 100%;
+  max-width: 720px;       /* contained on desktop */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 12px;     /* small gutters for mobile */
+  padding-right: 12px;
+}
 
+/* Make the existing barcode wrapper participate in centering */
+#fullBarcodeWrap{
+  margin: 16px 0;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* Contained, responsive barcode */
-#fullBarcodeWrap, #fullBarcodeWrap svg{
+/* Make SVG scale within the cap */
+#fullBarcodeWrap svg{
+  display: block;
   width: 100%;
   height: auto;
-  max-width: 720px;        /* slightly wider for the diagonal motif */
+  max-width: 720px;
 }
-#fullBarcodeWrap{ margin: 16px 0; }
 
-/* Relator details (no tabs) */
-.relator-card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-  max-width: 720px;         /* match barcode cap */
+/* Plain (no background) Relator content, centered */
+.relator-plain{
+  max-width: 720px;
+  margin: 16px auto;
+  text-align: center;
 }
-.relator-meta{
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.4px;
-  margin-bottom: 8px;
+
+/* Remove tabular/background look from your prior .relator-card */
+.relator-card{ 
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.relator-title{
-  margin: 0 0 8px 0;
-  font-size: 22px;
-}
-.relator-subtitle{
-  font-size: 16px;
-  margin: 14px 0 8px 0;
-}
-.relator-text{
+
+/* Paragraph readability */
+.relator-plain p{
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.5;
-  margin: 0 0 10px 0;
+  line-height: 1.55;
+  margin: 8px 0;
 }
 
-/* Blue callout rows like the screenshot */
-.callout{
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  background: rgba(58,160,255,0.15);
-  border: 1px solid rgba(58,160,255,0.35);
-  border-left: 6px solid #3aa0ff;
+/* Bullets: easier to scan left-aligned within centered block */
+.relator-plain .bullet{
+  text-align: left;
   color: #eaf2ff;
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin: 10px 0;
-  font-size: 13px;
-  line-height: 1.45;
 }
+
+/* Responsive: slightly narrower cap on small phones */
+@media (max-width: 420px){
+  .center-wrap,
+  #fullBarcodeWrap,
+  .relator-plain{
+    max-width: 600px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -542,11 +557,14 @@ html, body{ overflow-x: hidden; }
 
 
 
-<!-- Full 34-bar DNA (contained, with diagonal cut) -->
-<div id="fullBarcodeWrap"></div>
+<div class="center-wrap">
+  <!-- Full 34-bar DNA (contained, with diagonal cut) -->
+  <div id="fullBarcodeWrap"></div>
 
-<!-- Relator details (no tabs) -->
-<div id="relatorDetails"></div>
+  <!-- Relator details (plain, centered) -->
+  <div id="relatorDetails" class="relator-plain relator-card"></div>
+</div>
+
 
 
 
@@ -1180,14 +1198,21 @@ function renderFull34BarcodeContained(data){
   const grey = "#778199";
   const rail = "#bfbfbf";
 
-  // Geometry tuned to resemble your screenshot while staying responsive
   const svgWidth = 700, svgHeight = 70;
-  const paddingLeft = 0;
-  const topY = 12;                 // top rail Y
-  const barTop = 18;               // bar block Y offset
+  const topY = 12, barTop = 18;
   const barWidth = 8, barHeight = 40, spacing = 12;
 
-  const bars = data.slice().sort((a,b)=>a.rank-b.rank);
+  const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
+  const rightBars = data.filter(d => d.rank > 5).sort((a,b)=>a.rank-b.rank);
+
+  const leftSpan = (leftBars.length - 1) * spacing + barWidth;
+  const leftStartX = 0;
+
+  const diagWidth = 56;
+  const gap = 8;
+  const rightStartX = leftStartX + leftSpan + gap + diagWidth;
+
+  const rightSpan = (rightBars.length - 1) * spacing + barWidth;
 
   d3.select('#fullBarcodeWrap').html('');
   const svg = d3.select('#fullBarcodeWrap')
@@ -1195,35 +1220,23 @@ function renderFull34BarcodeContained(data){
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     .attr('preserveAspectRatio','xMidYMid meet');
 
-  // Left short rails (like left chevron/rail)
+  // Left rails
   svg.append('line')
-    .attr('x1', paddingLeft+6).attr('y1', topY)
-    .attr('x2', paddingLeft+60).attr('y2', topY)
+    .attr('x1', leftStartX).attr('y1', topY)
+    .attr('x2', leftStartX + leftSpan).attr('y2', topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line')
-    .attr('x1', paddingLeft+6).attr('y1', svgHeight-topY)
-    .attr('x2', paddingLeft+60).attr('y2', svgHeight-topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-
-  // Diagonal "X" cut between left rails and main run (this is the missing piece)
-  svg.append('line')
-    .attr('x1', paddingLeft+60).attr('y1', topY)
-    .attr('x2', paddingLeft+120).attr('y2', svgHeight-topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1', paddingLeft+60).attr('y1', svgHeight-topY)
-    .attr('x2', paddingLeft+120).attr('y2', topY)
+    .attr('x1', leftStartX).attr('y1', svgHeight - topY)
+    .attr('x2', leftStartX + leftSpan).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // Bars group starts after the diagonal cut
-  const startX = paddingLeft + 120;
-  const g = svg.append('g').attr('transform',`translate(${startX},${barTop})`);
-
-  g.selectAll('rect')
-    .data(bars)
+  // Left 5 bars
+  const gLeft = svg.append('g').attr('transform',`translate(${leftStartX},${barTop})`);
+  gLeft.selectAll('rect')
+    .data(leftBars)
     .enter()
     .append('rect')
-      .attr('x', (d,i) => i * spacing)
+      .attr('x', (d,i)=> i*spacing)
       .attr('y', 0)
       .attr('width', barWidth)
       .attr('height', barHeight)
@@ -1231,21 +1244,51 @@ function renderFull34BarcodeContained(data){
       .attr('fill', d => d.rank === 1 ? (domainColors[d.domain] || '#3aa0ff') : grey)
       .attr('data-rank', d => d.rank)
       .style('cursor','pointer')
-      .on('mouseover', (e,d) => barHoverOnly(d))
-      .on('mouseout', () => clearAllHighlights())
-      .on('click', (e,d) => tileClick(e,d));
+      .on('mouseover', (e,d)=> barHoverOnly(d))
+      .on('mouseout', ()=> clearAllHighlights())
+      .on('click', (e,d)=> tileClick(e,d));
 
-  // Top/bottom rails across the bar run to mirror the screenshot
-  const totalSpan = (bars.length - 1) * spacing + barWidth;
+  // Diagonal X
+  const x1 = leftStartX + leftSpan + gap;
+  const x2 = x1 + diagWidth;
   svg.append('line')
-    .attr('x1', startX).attr('y1', topY)
-    .attr('x2', startX + totalSpan).attr('y2', topY)
+    .attr('x1', x1).attr('y1', topY)
+    .attr('x2', x2).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
   svg.append('line')
-    .attr('x1', startX).attr('y1', svgHeight-topY)
-    .attr('x2', startX + totalSpan).attr('y2', svgHeight-topY)
+    .attr('x1', x1).attr('y1', svgHeight - topY)
+    .attr('x2', x2).attr('y2', topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+
+  // Right rails
+  svg.append('line')
+    .attr('x1', rightStartX).attr('y1', topY)
+    .attr('x2', rightStartX + rightSpan).attr('y2', topY)
+    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+  svg.append('line')
+    .attr('x1', rightStartX).attr('y1', svgHeight - topY)
+    .attr('x2', rightStartX + rightSpan).attr('y2', svgHeight - topY)
+    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+
+  // Right 29 bars
+  const gRight = svg.append('g').attr('transform',`translate(${rightStartX},${barTop})`);
+  gRight.selectAll('rect')
+    .data(rightBars)
+    .enter()
+    .append('rect')
+      .attr('x', (d,i)=> i*spacing)
+      .attr('y', 0)
+      .attr('width', barWidth)
+      .attr('height', barHeight)
+      .attr('rx', 2)
+      .attr('fill', grey)
+      .attr('data-rank', d => d.rank)
+      .style('cursor','pointer')
+      .on('mouseover', (e,d)=> barHoverOnly(d))
+      .on('mouseout', ()=> clearAllHighlights())
+      .on('click', (e,d)=> tileClick(e,d));
 }
+
 
 // ===== Relator details (no tabs, like your image) =====
 function renderRelatorDetailsNoTabs(strengths){
@@ -1253,35 +1296,39 @@ function renderRelatorDetailsNoTabs(strengths){
   if(!relator) return;
 
   const domColor = "#3aa0ff"; // Relationship Building
-  const el = d3.select('#relatorDetails');
+  const wrap = d3.select('#relatorDetails');
 
-  el.html(`
-    <div class="relator-card">
-      <div class="relator-meta">RELATIONSHIP BUILDING</div>
-      <h2 class="relator-title" style="color:${domColor}">1. Relator®</h2>
+  // Build the HTML once, minimal nodes, no heavy wrappers
+  const html = `
+    <div style="max-width:720px;margin:16px auto;text-align:center;">
+      <div style="color:var(--muted);font-size:12px;letter-spacing:.4px;">RELATIONSHIP BUILDING</div>
+      <h2 style="color:${domColor};margin:4px 0 10px 0;font-size:22px;">1. Relator®</h2>
 
-      <h3 class="relator-subtitle">What is Relator?</h3>
-      <p class="relator-text">
+      <h3 style="margin:12px 0 6px 0;font-size:16px;">What is Relator?</h3>
+      <p style="color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 10px 0;">
         Relator talents describe a person’s attitude toward close relationships; people strong in Relator are drawn to those they already know, prefer depth over breadth, and gain energy from working hard with trusted friends toward shared goals [web:2].
       </p>
 
-      <h3 class="relator-subtitle" style="text-align:center; margin-top:18px;">Why Your Relator Is Unique</h3>
-      <p class="relator-text" style="text-align:center; margin-top:4px;">
+      <h3 style="margin:14px 0 6px 0;font-size:16px;">Why Your Relator Is Unique</h3>
+      <p style="color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 10px 0;">
         These Strengths Insights are personalized based on your CliftonStrengths results [web:2].
       </p>
 
-      <div class="callout">Chances are good that you are a well‑read individual; friends seek your guidance, and something you’ve read often unlocks a new perspective for them [web:2].</div>
-      <div class="callout">Instinctively, you keep a small circle of close friends built on intimacy and trust; you focus on the preciousness of those ties more than on quantity [web:2].</div>
-      <div class="callout">By nature, you bond with and work well with people who clearly state what they want to accomplish [web:2].</div>
-      <div class="callout">Because of your strengths, you’re most productive when allowed independence; unnecessary group work can hinder progress [web:3].</div>
-      <div class="callout">It’s very likely you are fond of and devoted to the people in your life; you thrive when that warmth is reciprocated [web:24].</div>
+      <div style="max-width:720px;margin:0 auto;text-align:left;">
+        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Chances are good that you are a well‑read individual; friends seek your guidance, and something you’ve read often unlocks a new perspective for them [web:2].</p>
+        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Instinctively, you keep a small circle of close friends built on intimacy and trust; you focus on the preciousness of those ties more than on quantity [web:2].</p>
+        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• By nature, you bond with and work well with people who clearly state what they want to accomplish [web:2].</p>
+        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• Because of your strengths, you’re most productive when allowed independence; unnecessary group work can hinder progress [web:3].</p>
+        <p style="color:#eaf2ff;font-size:13px;line-height:1.5;margin:8px 0;">• It’s very likely you are fond of and devoted to the people in your life; you thrive when that warmth is reciprocated [web:24].</p>
+      </div>
     </div>
-  `);
+  `;
+
+  // Single DOM write
+  wrap.html(html);
 }
 
-// ===== Initialize these new blocks (call after your other first renders) =====
-renderFull34BarcodeContained(strengths);
-renderRelatorDetailsNoTabs(strengths);
+
 
 
 
