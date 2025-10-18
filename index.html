@@ -538,6 +538,11 @@ html, body{ overflow-x: hidden; }
 
     <div class="tooltip" id="tooltip"></div>
   </div>
+<!-- Mobile modal -->
+<div id="mobileModal" class="mobile-modal">
+  <span class="close-btn">&times;</span>
+  <div id="mobileModalBody" class="mobile-modal-content"></div>
+</div>
 
 
 
@@ -1144,6 +1149,19 @@ if(strength){
 }
 
 }
+// Search functionality
+d3.select('#search').on('input', function() {
+  const query = this.value.toLowerCase();
+  d3.selectAll('.tile')
+    .style('display', d => d.name.toLowerCase().includes(query) || d.rank.toString() === query ? 'flex' : 'none');
+});
+
+// Highlight Top 5
+d3.select('#top5').on('click', () => {
+  const top5Ranks = [1,2,3,4,5];
+  d3.selectAll('.tile')
+    .classed('highlighted', d => top5Ranks.includes(d.rank));
+});
 
 
 
@@ -1348,12 +1366,6 @@ function renderRelatorDetailsNoTabs(strengths){
 
 
   
-  <!-- Mobile modal popup -->
-<div id="mobileModal" class="mobile-modal">
-  <div class="mobile-modal-content">
-    <span class="close-btn">&times;</span>
-    <div id="mobileModalBody"></div>
-  </div>
-</div>
+
 </body>
 </html>
