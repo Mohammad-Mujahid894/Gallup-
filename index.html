@@ -920,6 +920,7 @@ function highlightRank(rank){
   d3.selectAll('.tile').classed('muted', t => t.rank !== rank);
   // Stackbar segments
   const strength = strengths.find(s => s.rank === rank);
+const strength = strengths.find(s => s.rank === d.rank);
 if(strength){
   d3.selectAll('.stack-seg')
     .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
@@ -1141,27 +1142,15 @@ function barHoverOnly(d){
 
   // Highlight stackbar
 const strength = strengths.find(s => s.rank === d.rank);
+const strength = strengths.find(s => s.rank === d.rank);
 if(strength){
   d3.selectAll('.stack-seg')
-    .attr('opacity', s => (s && s.key === strength.domain) ? 1 : 0.25)
-    .attr('stroke',  s => (s && s.key === strength.domain) ? '#fff' : null)
-    .attr('stroke-width', s => (s && s.key === strength.domain) ? 2 : null);
+    .attr('opacity', s => s.key === strength.domain ? 1 : 0.25)
+    .attr('stroke', s => s.key === strength.domain ? '#fff' : null)
+    .attr('stroke-width', s => s.key === strength.domain ? 2 : null);
+}
 }
 
-}
-// Search functionality
-d3.select('#search').on('input', function() {
-  const query = this.value.toLowerCase();
-  d3.selectAll('.tile')
-    .style('display', d => d.name.toLowerCase().includes(query) || d.rank.toString() === query ? 'flex' : 'none');
-});
-
-// Highlight Top 5
-d3.select('#top5').on('click', () => {
-  const top5Ranks = [1,2,3,4,5];
-  d3.selectAll('.tile')
-    .classed('highlighted', d => top5Ranks.includes(d.rank));
-});
 
 
 
