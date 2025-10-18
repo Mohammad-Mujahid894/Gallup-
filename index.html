@@ -1085,6 +1085,7 @@ function renderRelatorDNA() {
   const svgWidth = 500, svgHeight = 60;
   const barWidth = 8, barHeight = 40, spacing = 12;
 
+  // clear existing svg
   d3.select("#relatorDNA").html("");
 
   const svg = d3.select("#relatorDNA")
@@ -1104,24 +1105,31 @@ function renderRelatorDNA() {
       .attr("width", barWidth)
       .attr("height", barHeight)
       .attr("rx", 2)
-      .attr("fill", d => (d.rank === 1) ? domainColors[d.domain] : "rgba(255,255,255,0.15)")
+      .attr("fill", d => (d.rank === 1) 
+        ? domainColors[d.domain] 
+        : "rgba(255,255,255,0.15)")
       .attr("data-rank", d => d.rank);
-  
-  // Optional: subtle glow for the active bar
+
+  // glow highlight for the active bar
   svg.selectAll("rect")
     .filter(d => d.rank === 1)
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.8)
     .attr("filter", "drop-shadow(0 0 6px #3aa0ff)");
+
+  // top and bottom decorative lines (same as main DNA)
+  svg.append("line")
+    .attr("x1",0).attr("y1",5).attr("x2",500).attr("y2",5)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+
+  svg.append("line")
+    .attr("x1",0).attr("y1",55).attr("x2",500).attr("y2",55)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
 }
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  renderRelatorDNA();
-});
+document.addEventListener("DOMContentLoaded", renderRelatorDNA);
 </script>
 
-</script>
 
 
 
