@@ -703,6 +703,19 @@ window.addEventListener('scroll', () => {
   });
 });
 </script>
+  <script>
+  // Ensure D3 and strengths are available
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1) Top split barcode (compact version)
+    renderCliftonSVGBAR ? renderCliftonSVGBAR(strengths) : renderCliftonSVGBar(strengths);
+
+    // 2) Full 34-barcode with diagonal X in the contained wrapper
+    renderFull34BarcodeContained(strengths);
+
+    // 3) Relator details (plain, centered)
+    renderRelatorDetailsNoTabs(strengths);
+  });
+</script>
 <script>
 /* ============================
    DATA: 34 strengths with domains and short descriptions
@@ -1328,8 +1341,7 @@ function renderRelatorDetailsNoTabs(strengths){
   wrap.html(html);
 }
 
-renderSplitBarcode(strengths);
-renderRelatorPlain(strengths);
+
 
 
 
