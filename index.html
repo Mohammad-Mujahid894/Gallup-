@@ -1074,7 +1074,7 @@ function barHoverOnly(d){
 </script>
 
 <script>
-function renderRelatorDNA() {
+function renderMiniDNA(rankToHighlight) {
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
@@ -1085,49 +1085,76 @@ function renderRelatorDNA() {
   const svgWidth = 500, svgHeight = 60;
   const barWidth = 8, barHeight = 40, spacing = 12;
 
-  // clear existing svg
+  // Reset existing DNA svg in that section
   d3.select("#relatorDNA").html("");
 
   const svg = d3.select("#relatorDNA")
     .append("svg")
     .attr("viewBox", `0 0 ${svgWidth} ${svgHeight}`)
-    .attr("preserveAspectRatio", "xMidYMid meet")
+    .attr("preserveAspectRatio","xMidYMid meet")
     .attr("width", null)
     .attr("height", null);
 
-  // draw bars
-  svg.selectAll("rect")
-    .data(strengths)
-    .enter()
-    .append("rect")
-      .attr("x", (d,i) => i * spacing)
-      .attr("y", 10)
-      .attr("width", barWidth)
-      .attr("height", barHeight)
-      .attr("rx", 2)
-      .attr("fill", d => (d.rank === 1) 
-        ? domainColors[d.domain] 
-        : "rgba(255,255,255,0.15)")
-      .attr("data-rank", d => d.rank);
+  // draw function same as main one
+  function drawBars(container, bars) {
+    container.selectAll("rect")
+      .data(bars)
+      .enter()
+      .append("rect")
+        .attr("x", (d,i) => i * spacing)
+        .attr("y", 10)
+        .attr("width", barWidth)
+        .attr("height", barHeight)
+        .attr("rx", 2)
+        .attr("fill", d =>
+          d.rank === rankToHighlight
+            ? domainColors[d.domain]
+            : "rgba(255,255,255,0.15)"
+        )
+        .attr("data-rank", d => d.rank);
+  }
 
-  // glow highlight for the active bar
-  svg.selectAll("rect")
-    .filter(d => d.rank === 1)
-    .attr("stroke", "#fff")
-    .attr("stroke-width", 1.8)
-    .attr("filter", "drop-shadow(0 0 6px #3aa0ff)");
+  // ---- LEFT 5 bars ----
+  const leftBars = strengths.filter(d => d.rank <= 5);
+  const leftG = svg.append("g").attr("transform","translate(0,10)");
+  drawBars(leftG, leftBars);
 
-  // top and bottom decorative lines (same as main DNA)
-  svg.append("line")
-    .attr("x1",0).attr("y1",5).attr("x2",500).attr("y2",5)
+  // ---- Decorative lines left ----
+  svg.append("line").attr("x1",0).attr("y1",5).attr("x2",56).attr("y2",5)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+  svg.append("line").attr("x1",0).attr("y1",55).attr("x2",56).attr("y2",55)
     .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
 
-  svg.append("line")
-    .attr("x1",0).attr("y1",55).attr("x2",500).attr("y2",55)
+  // ---- Diagonals after 5 bars ----
+  svg.append("line").attr("x1",56).attr("y1",5).attr("x2",116).attr("y2",55)
     .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+  svg.append("line").attr("x1",56).attr("y1",55).attr("x2",116).attr("y2",5)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+
+  // ---- RIGHT 29 bars ----
+  const rightBars = strengths.filter(d => d.rank > 5);
+  const rightG = svg.append("g").attr("transform","translate(116,10)");
+  drawBars(rightG, rightBars);
+
+  // ---- Decorative lines right ----
+  svg.append("line")
+    .attr("x1",116).attr("y1",5).attr("x2",500).attr("y2",5)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+  svg.append("line")
+    .attr("x1",116).attr("y1",55).attr("x2",500).attr("y2",55)
+    .attr("stroke","#bfbfbf").attr("stroke-width",6).attr("stroke-linecap","round");
+
+  // subtle glow on highlighted bar
+  svg.selectAll("rect")
+    .filter(d => d.rank === rankToHighlight)
+    .attr("stroke","#fff")
+    .attr("stroke-width",1.8)
+    .attr("filter","drop-shadow(0 0 6px #3aa0ff)");
 }
 
-document.addEventListener("DOMContentLoaded", renderRelatorDNA);
+document.addEventListener("DOMContentLoaded", () => {
+  renderMiniDNA(1); // Relator’s rank = 1
+});
 </script>
 
 
