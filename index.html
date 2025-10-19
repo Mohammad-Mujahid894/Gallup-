@@ -379,30 +379,7 @@ html, body{ overflow-x: hidden; }
 @media (min-width: 901px){
   .mobile-modal{ display: none !important; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 /* Center + contain */
 .center-wrap{
   width: 100%;
@@ -471,26 +448,6 @@ html, body{ overflow-x: hidden; }
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
   </style>
 </head>
 <body>
@@ -501,10 +458,6 @@ html, body{ overflow-x: hidden; }
   <canvas id="stars3" class="layer" aria-hidden="true"></canvas>
   <div id="nebula" class="layer" aria-hidden="true"></div>
 
-
-
-
-  
   <div class="container" id="app">
     <header class="title">
       <div>
@@ -540,23 +493,6 @@ html, body{ overflow-x: hidden; }
   </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="center-wrap">
   <!-- Full 34-bar DNA (contained, with diagonal cut) -->
   <div id="fullBarcodeWrap"></div>
@@ -564,37 +500,6 @@ html, body{ overflow-x: hidden; }
   <!-- Relator details (plain, centered) -->
   <div id="relatorDetails" class="relator-plain relator-card"></div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <script>
     /* ========= Parallax starfields (3 layers for depth) ========= */
@@ -1157,49 +1062,6 @@ function barHoverOnly(d){
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ===== Full 34-barcode with diagonal "X" cut, fully contained =====
 function renderFull34BarcodeContained(data){
   const domainColors = {
@@ -1314,8 +1176,6 @@ const rightStartX = offsetX + leftSpan + diagWidth; // remove +gap
     .on('click', (e,d)=> tileClick(e,d));
 }
 
-
-
 // ===== Relator details (no tabs, like your image) =====
 function renderRelatorDetailsNoTabs(strengths){
   const relator = strengths.find(s => s.rank === 1 && s.name === 'Relator');
@@ -1381,26 +1241,8 @@ function renderRelatorDetailsNoTabs(strengths){
   wrap.html(html);
 }
 
-
-
-
-
-
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
   <!-- Mobile modal popup -->
 <div id="mobileModal" class="mobile-modal">
   <div class="mobile-modal-content">
