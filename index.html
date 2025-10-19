@@ -1211,9 +1211,20 @@ function renderFull34BarcodeContained(data){
   const grey = "#778199";
   const rail = "#bfbfbf";
 
-  const svgWidth = 640, svgHeight = 70;
-  const barTop = 18, barHeight = 38, barWidth = 8, spacing = 12;
-  const topY = 12;
+// SVG and layout constants (optimized)
+const svgWidth = 640;
+const svgHeight = 70;
+
+const topY = 12;                     // y position of top rail
+const bottomY = svgHeight - topY;    // y position of bottom rail
+
+const railThickness = 6;             // line thickness for rails
+const barWidth = 8;                  // each bar's width
+const spacing = 12;                  // space between bars
+
+// make bars fit snugly between the rails (no gaps)
+const barTop = topY + railThickness / 2;
+const barHeight = svgHeight - (topY + railThickness / 2) * 2;
 
   // split
   const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
@@ -1221,13 +1232,13 @@ function renderFull34BarcodeContained(data){
 
   const leftSpan = (leftBars.length - 1) * spacing + barWidth;
   const diagWidth = 56;
-  const gap = 10;
-  const rightSpan = (rightBars.length - 1) * spacing + barWidth;
-  const totalWidth = leftSpan + diagWidth + rightSpan + gap;
+const gap = 10;
+const rightSpan = (rightBars.length - 1) * spacing + barWidth;
+const totalWidth = leftSpan + diagWidth + rightSpan + gap;
 
-  const offsetX = (svgWidth - totalWidth) / 2;
-  const rightStartX = offsetX + leftSpan + diagWidth + gap;
-
+const offsetX = (svgWidth - totalWidth) / 2;
+const rightStartX = offsetX + leftSpan + diagWidth; // remove +gap
+  
   d3.select('#fullBarcodeWrap').html('');
   const svg = d3.select('#fullBarcodeWrap')
     .append('svg')
