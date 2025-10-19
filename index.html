@@ -1212,19 +1212,20 @@ function renderFull34BarcodeContained(data){
   const rail = "#bfbfbf";
 
 // SVG and layout constants (optimized)
+// SVG and layout constants (refined)
 const svgWidth = 640;
 const svgHeight = 70;
 
-const topY = 12;                     // y position of top rail
-const bottomY = svgHeight - topY;    // y position of bottom rail
+const topY = 12;
+const railThickness = 6;
+const barWidth = 8;
+const spacing = 12;
 
-const railThickness = 6;             // line thickness for rails
-const barWidth = 8;                  // each bar's width
-const spacing = 12;                  // space between bars
+// leave 3 px gap between bars and rails
+const innerGap = 3;
 
-// make bars fit snugly between the rails (no gaps)
-const barTop = topY + railThickness / 2;
-const barHeight = svgHeight - (topY + railThickness / 2) * 2;
+const barTop = topY + railThickness / 2 + innerGap;
+const barHeight = svgHeight - (topY + railThickness / 2 + innerGap) * 2;
 
   // split
   const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
