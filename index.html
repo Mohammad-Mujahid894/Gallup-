@@ -501,27 +501,8 @@ html, body{ overflow-x: hidden; }
   <div id="relatorDetails" class="relator-plain relator-card"></div>
 </div>
 
-    <!-- ===== Deliberative Section ===== -->
-<div class="center-wrap">
-
-  <!-- DNA barcode for Deliberative -->
-  <div id="fullBarcodeWrap2"></div>
-
-  <!-- Deliberative details -->
-  <div id="deliberativeDetails" class="deliberative-plain deliberative-card"></div>
-</div>
-
-
-  <div class="center-wrap">
-
-  <!-- DNA barcode for Deliberative -->
-  <div id="fullBarcodeWrap2"></div>
-
-  <!-- Deliberative details -->
-  <div id="deliberativeDetails" class="deliberative-plain deliberative-card"></div>
-</div>
-
-
+<div id="deliberativeDetails" class="relator-plain relator-card"></div>
+  
     <script>
     /* ========= Parallax starfields (3 layers for depth) ========= */
     const DPR = Math.min(2, window.devicePixelRatio || 1);
@@ -1294,337 +1275,139 @@ function renderRelatorDetailsNoTabs(strengths){
 
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function renderFull34BarcodeContained(data){
-  const domainColors = {
-    EXECUTING: "#8b61ff",
-    INFLUENCING: "#ff9b3f",
-    RELATIONSHIP: "#3aa0ff",
-    STRATEGIC: "#38d07a"
-  };
-  const grey = "#778199";
-  const rail = "#bfbfbf";
-
-// SVG and layout constants (optimized)
-// SVG and layout constants (refined)
-const svgWidth = 640;
-const svgHeight = 70;
-
-const topY = 12;
-const railThickness = 6;
-const barWidth = 8;
-const spacing = 12;
-
-// leave 3 px gap between bars and rails
-const innerGap = 3;
-
-const barTop = topY + railThickness / 2 + innerGap;
-const barHeight = svgHeight - (topY + railThickness / 2 + innerGap) * 2;
-
-  // split
-  const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
-  const rightBars = data.filter(d => d.rank > 5).sort((a,b)=>a.rank-b.rank);
-
-  const leftSpan = (leftBars.length - 1) * spacing + barWidth;
-  const diagWidth = 56;
-const gap = 10;
-const rightSpan = (rightBars.length - 1) * spacing + barWidth;
-const totalWidth = leftSpan + diagWidth + rightSpan + gap;
-
-const offsetX = (svgWidth - totalWidth) / 2;
-const rightStartX = offsetX + leftSpan + diagWidth; // remove +gap
-  
-  d3.select('#fullBarcodeWrap').html('');
-  const svg = d3.select('#fullBarcodeWrap')
-    .append('svg')
-    .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('preserveAspectRatio','xMidYMid meet');
-
-  // left rails
-  svg.append('line')
-    .attr('x1', offsetX).attr('y1', topY)
-    .attr('x2', offsetX + leftSpan).attr('y2', topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1', offsetX).attr('y1', svgHeight - topY)
-    .attr('x2', offsetX + leftSpan).attr('y2', svgHeight - topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-
-  // left bars
-  const gLeft = svg.append('g').attr('transform',`translate(${offsetX},${barTop})`);
-  gLeft.selectAll('rect')
-    .data(leftBars)
-    .enter()
-    .append('rect')
-    .attr('x', (d,i)=> i*spacing)
-    .attr('y', 0)
-    .attr('width', barWidth)
-    .attr('height', barHeight)
-    .attr('rx', 2)
-    .attr('fill', d => d.rank === 1 ? (domainColors[d.domain] || '#3aa0ff') : grey)
-    .attr('data-rank', d => d.rank)
-    .style('cursor','pointer')
-    .on('mouseover', (e,d)=> barHoverOnly(d))
-    .on('mouseout', ()=> clearAllHighlights())
-    .on('click', (e,d)=> tileClick(e,d));
-
-  // diagonal X
-  const diagStart = offsetX + leftSpan;
-  svg.append('line')
-    .attr('x1', diagStart).attr('y1', topY)
-    .attr('x2', diagStart + diagWidth).attr('y2', svgHeight - topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1', diagStart).attr('y1', svgHeight - topY)
-    .attr('x2', diagStart + diagWidth).attr('y2', topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-
-  // right rails
-  svg.append('line')
-    .attr('x1', rightStartX).attr('y1', topY)
-    .attr('x2', rightStartX + rightSpan).attr('y2', topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1', rightStartX).attr('y1', svgHeight - topY)
-    .attr('x2', rightStartX + rightSpan).attr('y2', svgHeight - topY)
-    .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-
-  // right bars
-  const gRight = svg.append('g').attr('transform',`translate(${rightStartX},${barTop})`);
-  gRight.selectAll('rect')
-    .data(rightBars)
-    .enter()
-    .append('rect')
-    .attr('x', (d,i)=> i*spacing)
-    .attr('y', 0)
-    .attr('width', barWidth)
-    .attr('height', barHeight)
-    .attr('rx', 2)
-    .attr('fill', grey)
-    .attr('data-rank', d => d.rank)
-    .style('cursor','pointer')
-    .on('mouseover', (e,d)=> barHoverOnly(d))
-    .on('mouseout', ()=> clearAllHighlights())
-    .on('click', (e,d)=> tileClick(e,d));
-}
-
-// ===== Relator details (no tabs, like your image) =====
-function renderRelatorDetailsNoTabs(strengths){
-  const relator = strengths.find(s => s.rank === 1 && s.name === 'Relator');
-  if(!relator) return;
-
-  const domColor = "#3aa0ff";
-  const wrap = d3.select('#relatorDetails');
-
-  const html = `
-    <div style="max-width:720px;margin:24px auto;text-align:left;">
-      <h2 style="color:${domColor};font-size:26px;margin-bottom:8px;">1. Relator<sup>®</sup></h2>
-
-      <h3 style="font-size:15px;margin-top:10px;">What is Relator?</h3>
-      <p style="color:var(--muted);font-size:14px;line-height:1.6;">
-        Relator talents describe a person’s attitude toward their relationships. People with strong Relator talents are drawn to those they already know.
-        They prefer depth over breadth and gain energy from working hard with trusted friends toward shared goals.
-      </p>
-
-      <h3 style="font-size:15px;margin-top:18px;">Why Your Relator Is Unique</h3>
-      <p style="font-style:italic;color:var(--muted);font-size:13px;margin-bottom:10px;">
-        These Strengths Insights are personalized based on your CliftonStrengths results.
-      </p>
-
-      <!-- Tabs -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
-        <div style="background:${domColor};color:#fff;padding:6px 14px;border-radius:6px;font-size:13px;">Relator</div>
-        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Deliberative</div>
-        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Learner</div>
-        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Intellection</div>
-        <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Input</div>
-      </div>
-
-      <!-- Insights -->
-      <div style="
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:16px;
-  padding:18px 20px;
-  backdrop-filter:blur(10px);
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-">
-        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
-          Chances are good that you are a well-read individual. People whom you have befriended turn to you for guidance. You often help them see a situation or problem from a different perspective.
-        </div>
-        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
-          Instinctively, you have a small number of close friends who share a foundation of intimacy and trust. You care less about how many friends you have and more about how precious those friends are.
-        </div>
-        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
-          By nature, you bond with and work well with people who tell you what they want to accomplish in life.
-        </div>
-        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
-          Because of your strengths, you prefer independence; unnecessary group work can hinder progress.
-        </div>
-        <div style="background:rgba(58,160,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
-          It’s very likely you are fond of and devoted to the people in your life; you thrive when that warmth is reciprocated.
-        </div>
-      </div>
-    </div>
-    <!-- Blend Section -->
-<div style="margin-top:24px;">
-  <h3 style="font-size:16px;margin-bottom:12px;">How Relator Blends With Your Other Top Five Strengths</h3>
-
-  <div style="display:flex;flex-direction:column;gap:12px;">
-    
-    <div>
-      <p style="color:#8A4FFF;font-weight:600;font-size:14px;margin-bottom:4px;">RELATOR + DELIBERATIVE</p>
-      <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-        Trusting others takes some time for you because you trust only those you know well, and you are careful about who you get to know.
-      </p>
-    </div>
-
-    <div>
-      <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">RELATOR + LEARNER</p>
-      <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-        Your deepest, longest friendships don’t stagnate because you strive to discover something new about those who are familiar.
-      </p>
-    </div>
-
-    <div>
-      <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">RELATOR + INTELLECTION</p>
-      <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-        Even though you find solitude conducive for clarifying your thoughts, it will never take the place of being with your friends.
-      </p>
-    </div>
-
-    <div>
-      <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">RELATOR + INPUT</p>
-      <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-        You value tangible, practical resources, but you also value the human resources of your close friends and family.
-      </p>
-    </div>
-
-  </div>
-</div>
   `;
   wrap.html(html);
 }
 
-</script>
 
+  function renderDeliberativeDetailsNoTabs(strengths){
+  // find Deliberative as rank 2 in your data
+  const delib = strengths.find(s => s.rank === 2 && s.name === 'Deliberative');
+  if(!delib) return;
 
-<script>
-// ===== Barcode renderer for Deliberative (only rank 2 highlighted) =====
-function renderDeliberativeBarcode(data){
-  const domainColors = {
-    EXECUTING: "#8A4FFF",
-    INFLUENCING: "#FF9B3F",
-    RELATIONSHIP: "#3AA0FF",
-    STRATEGIC: "#00B67A"
-  };
-  const grey = "#778199";
-  const rail = "#bfbfbf";
-  const svgWidth = 640, svgHeight = 70;
-  const topY = 12, railThickness = 6, barWidth = 8, spacing = 12;
-  const innerGap = 3, barTop = topY + railThickness / 2 + innerGap;
-  const barHeight = svgHeight - (topY + railThickness / 2 + innerGap) * 2;
-
-  const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
-  const rightBars = data.filter(d => d.rank > 5).sort((a,b)=>a.rank-b.rank);
-
-  const leftSpan = (leftBars.length - 1) * spacing + barWidth;
-  const diagWidth = 56, rightSpan = (rightBars.length - 1) * spacing + barWidth;
-  const totalWidth = leftSpan + diagWidth + rightSpan;
-  const offsetX = (svgWidth - totalWidth) / 2;
-  const rightStartX = offsetX + leftSpan + diagWidth;
-
-  d3.select('#fullBarcodeWrap2').html('');
-  const svg = d3.select('#fullBarcodeWrap2')
-    .append('svg')
-    .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('preserveAspectRatio','xMidYMid meet');
-
-  // Left and right rails
-  const addRail = (x1,x2,y)=>svg.append('line')
-    .attr('x1',x1).attr('y1',y).attr('x2',x2).attr('y2',y)
-    .attr('stroke',rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  addRail(offsetX, offsetX+leftSpan, topY);
-  addRail(offsetX, offsetX+leftSpan, svgHeight-topY);
-
-  const gLeft = svg.append('g').attr('transform',`translate(${offsetX},${barTop})`);
-  gLeft.selectAll('rect').data(leftBars).enter().append('rect')
-    .attr('x',(d,i)=>i*spacing)
-    .attr('width',barWidth)
-    .attr('height',barHeight)
-    .attr('rx',2)
-    .attr('fill',d=>d.rank===2?domainColors.EXECUTING:grey);
-
-  // diagonal "X"
-  const diagStart = offsetX + leftSpan;
-  addRail(diagStart, diagStart+diagWidth, topY);
-  addRail(diagStart, diagStart+diagWidth, svgHeight-topY);
-
-  const diagLines = [
-    [diagStart, topY, diagStart+diagWidth, svgHeight-topY],
-    [diagStart, svgHeight-topY, diagStart+diagWidth, topY]
-  ];
-  diagLines.forEach(([x1,y1,x2,y2])=>
-    svg.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
-    .attr('stroke',rail).attr('stroke-width',6).attr('stroke-linecap','round')
-  );
-
-  // Right rails and bars
-  addRail(rightStartX, rightStartX+rightSpan, topY);
-  addRail(rightStartX, rightStartX+rightSpan, svgHeight-topY);
-
-  const gRight = svg.append('g').attr('transform',`translate(${rightStartX},${barTop})`);
-  gRight.selectAll('rect').data(rightBars).enter().append('rect')
-    .attr('x',(d,i)=>i*spacing)
-    .attr('width',barWidth)
-    .attr('height',barHeight)
-    .attr('rx',2)
-    .attr('fill',grey);
-}
-
-// ===== Render Deliberative Details =====
-function renderDeliberativeDetails(strengths){
-  const domColor = "#8A4FFF";
+  // reuse the same palette and layout logic
+  const domColor = "#8b61ff"; // EXECUTING purple
   const wrap = d3.select('#deliberativeDetails');
 
+  // 1) Re-render the same DNA with only Deliberative highlighted in color (others grey)
+  //    Identical structure as your renderFull34BarcodeContained but with rank===2 colored.
+  (function renderDNAForDeliberative(data){
+    const domainColors = {
+      EXECUTING: "#8b61ff",
+      INFLUENCING: "#ff9b3f",
+      RELATIONSHIP: "#3aa0ff",
+      STRATEGIC: "#38d07a"
+    };
+    const grey = "#778199";
+    const rail = "#bfbfbf";
+
+    const svgWidth = 640;
+    const svgHeight = 70;
+
+    const topY = 12;
+    const railThickness = 6;
+    const barWidth = 8;
+    const spacing = 12;
+    const innerGap = 3;
+
+    const barTop = topY + railThickness / 2 + innerGap;
+    const barHeight = svgHeight - (topY + railThickness / 2 + innerGap) * 2;
+
+    const leftBars = data.filter(d => d.rank <= 5).sort((a,b)=>a.rank-b.rank);
+    const rightBars = data.filter(d => d.rank > 5).sort((a,b)=>a.rank-b.rank);
+
+    const leftSpan = (leftBars.length - 1) * spacing + barWidth;
+    const diagWidth = 56;
+    const gap = 10;
+    const rightSpan = (rightBars.length - 1) * spacing + barWidth;
+    const totalWidth = leftSpan + diagWidth + rightSpan + gap;
+
+    const offsetX = (svgWidth - totalWidth) / 2;
+    const rightStartX = offsetX + leftSpan + diagWidth;
+
+    // mount inside the same wrapper to keep the layout identical
+    d3.select('#fullBarcodeWrap').html('');
+    const svg = d3.select('#fullBarcodeWrap')
+      .append('svg')
+      .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
+      .attr('preserveAspectRatio','xMidYMid meet');
+
+    // left rails
+    svg.append('line')
+      .attr('x1', offsetX).attr('y1', topY)
+      .attr('x2', offsetX + leftSpan).attr('y2', topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+    svg.append('line')
+      .attr('x1', offsetX).attr('y1', svgHeight - topY)
+      .attr('x2', offsetX + leftSpan).attr('y2', svgHeight - topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+
+    // left bars (only rank 2 colored; everything else grey)
+    const gLeft = svg.append('g').attr('transform',`translate(${offsetX},${barTop})`);
+    gLeft.selectAll('rect')
+      .data(leftBars)
+      .enter()
+      .append('rect')
+      .attr('x', (d,i)=> i*spacing)
+      .attr('y', 0)
+      .attr('width', barWidth)
+      .attr('height', barHeight)
+      .attr('rx', 2)
+      .attr('fill', d => d.rank === 2 ? (domainColors[d.domain] || '#8b61ff') : grey)
+      .attr('data-rank', d => d.rank)
+      .style('cursor','pointer')
+      .on('mouseover', (e,d)=> barHoverOnly(d))
+      .on('mouseout', ()=> clearAllHighlights())
+      .on('click', (e,d)=> tileClick(e,d));
+
+    // diagonal X
+    const diagStart = offsetX + leftSpan;
+    svg.append('line')
+      .attr('x1', diagStart).attr('y1', topY)
+      .attr('x2', diagStart + diagWidth).attr('y2', svgHeight - topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+    svg.append('line')
+      .attr('x1', diagStart).attr('y1', svgHeight - topY)
+      .attr('x2', diagStart + diagWidth).attr('y2', topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+
+    // right rails
+    svg.append('line')
+      .attr('x1', rightStartX).attr('y1', topY)
+      .attr('x2', rightStartX + rightSpan).attr('y2', topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+    svg.append('line')
+      .attr('x1', rightStartX).attr('y1', svgHeight - topY)
+      .attr('x2', rightStartX + rightSpan).attr('y2', svgHeight - topY)
+      .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
+
+    // right bars (all grey)
+    const gRight = svg.append('g').attr('transform',`translate(${rightStartX},${barTop})`);
+    gRight.selectAll('rect')
+      .data(rightBars)
+      .enter()
+      .append('rect')
+      .attr('x', (d,i)=> i*spacing)
+      .attr('y', 0)
+      .attr('width', barWidth)
+      .attr('height', barHeight)
+      .attr('rx', 2)
+      .attr('fill', grey)
+      .attr('data-rank', d => d.rank)
+      .style('cursor','pointer')
+      .on('mouseover', (e,d)=> barHoverOnly(d))
+      .on('mouseout', ()=> clearAllHighlights())
+      .on('click', (e,d)=> tileClick(e,d));
+  })(strengths);
+
+  // 2) Content block: identical layout as Relator, with Deliberative text
   const html = `
     <div style="max-width:720px;margin:24px auto;text-align:left;">
       <h2 style="color:${domColor};font-size:26px;margin-bottom:8px;">2. Deliberative<sup>®</sup></h2>
 
       <h3 style="font-size:15px;margin-top:10px;">What is Deliberative?</h3>
       <p style="color:var(--muted);font-size:14px;line-height:1.6;">
-        People exceptionally talented in the Deliberative theme are careful and vigilant.
-        They anticipate obstacles and weigh options before making decisions. They bring a sense
-        of caution and stability, helping others avoid unnecessary risks.
+        People with strong Deliberative talents are careful and vigilant. Everything may seem in order, but beneath the surface, they sense many risks. Rather than avoiding these hazards, they draw them out into the open so they can identify, assess and ultimately reduce each risk. Thus, those with strong Deliberative talents bring a thorough and conscientious approach to making decisions. They take care to consider options, thinking through the pros and cons of each alternative. To them, making the correct choice is more important than the time it takes to do so. They see life as something of a minefield. Others may run through it recklessly if they so choose, but those with Deliberative talents take a different approach. They identify the dangers, weigh these risks’ relative effect and then place their feet deliberately. They walk with care.
       </p>
 
       <h3 style="font-size:15px;margin-top:18px;">Why Your Deliberative Is Unique</h3>
@@ -1632,6 +1415,7 @@ function renderDeliberativeDetails(strengths){
         These Strengths Insights are personalized based on your CliftonStrengths results.
       </p>
 
+      <!-- Tabs -->
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
         <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Relator</div>
         <div style="background:${domColor};color:#fff;padding:6px 14px;border-radius:6px;font-size:13px;">Deliberative</div>
@@ -1640,72 +1424,79 @@ function renderDeliberativeDetails(strengths){
         <div style="background:#ddd;color:#333;padding:6px 14px;border-radius:6px;font-size:13px;">Input</div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="padding:12px 14px;border-radius:10px;background:#f3e9ff;color:#333;font-size:13px;line-height:1.6;">
-          You tend to pause and think before you act. You want to make sure your decisions are sound and based on full awareness of potential risks.
+      <!-- Insights -->
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        background:rgba(255,255,255,0.05);
+        border:1px solid rgba(255,255,255,0.15);
+        border-radius:16px;
+        padding:18px 20px;
+        backdrop-filter:blur(10px);
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+      ">
+        <div style="background:rgba(139,97,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Driven by your talents, you approach your studies or work with dignity and in a businesslike manner. It makes perfect sense, therefore, that you possess a vocabulary rich in complicated, technical, or subject-specific words. You habitually take time to carefully think through whatever you are going to say or write before you begin. Once you have identified your main theories or concepts, you can express them with clarity and precision.
         </div>
-        <div style="padding:12px 14px;border-radius:10px;background:#f3e9ff;color:#333;font-size:13px;line-height:1.6;">
-          You’re not pessimistic — just realistic. You instinctively anticipate obstacles so that surprises don’t derail progress.
+        <div style="background:rgba(139,97,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Because of your strengths, you are uncomfortable making quick decisions. When others reach an outcome too fast, you feel unsettled by what you perceive as a lack of concern and reckless behavior.
         </div>
-        <div style="padding:12px 14px;border-radius:10px;background:#f3e9ff;color:#333;font-size:13px;line-height:1.6;">
-          You prefer measured, careful decisions to rushed or impulsive choices. You take pride in being the calm, steady voice in the room.
+        <div style="background:rgba(139,97,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          By nature, you appreciate progress but not at the expense of vigilance. You see yourself as the safeguard against poor choices and failed outcomes.
         </div>
-        <div style="padding:12px 14px;border-radius:10px;background:#f3e9ff;color:#333;font-size:13px;line-height:1.6;">
-          You find satisfaction in protecting people or processes from unnecessary risks by planning ahead.
+        <div style="background:rgba(139,97,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          It’s very likely that you will not make reckless choices. While others may need immediate answers, you pause to take the time you need to make the best decisions.
+        </div>
+        <div style="background:rgba(139,97,255,0.15);padding:12px 14px;border-radius:10px;color:#eaf2ff;font-size:13px;line-height:1.55;">
+          Chances are good that you choose not to reveal to others too much about yourself, your thoughts, and your feelings. You exercise great care and weigh all possible risks when you interact with people. You prefer to give sincere and well-deserved compliments. You are likely to refrain from acknowledging the talents, contributions, and accomplishments of individuals and groups until you have clear evidence they merit special acclaim.
         </div>
       </div>
+    </div>
 
-      <!-- Blend Section -->
-      <div style="margin-top:24px;">
-        <h3 style="font-size:16px;margin-bottom:12px;">How Deliberative Blends With Your Other Top Five Strengths</h3>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div>
-            <p style="color:#3AA0FF;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + RELATOR</p>
-            <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-              Trusting others takes some time for you because you trust only those you know well, and you are careful about who you get to know.
-            </p>
-          </div>
-          <div>
-            <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + LEARNER</p>
-            <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-              You are open to new information and experiences, but you want adequate time to study them carefully and thoroughly.
-            </p>
-          </div>
-          <div>
-            <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + INTELLECTION</p>
-            <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-              Your introspective reflection enhances your self-awareness. Your vigilant anticipation enhances your risk awareness.
-            </p>
-          </div>
-          <div>
-            <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + INPUT</p>
-            <p style="color:var(--muted);font-size:13px;line-height:1.6;">
-              You gather effective tools and valuable resources that can help manage risk and prevent problems.
-            </p>
-          </div>
+    <!-- Blend Section -->
+    <div style="margin-top:24px;">
+      <h3 style="font-size:16px;margin-bottom:12px;">How Deliberative Blends With Your Other Top Five Strengths</h3>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <div>
+          <p style="color:#8A4FFF;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + RELATOR</p>
+          <p style="color:var(--muted);font-size:13px;line-height:1.6;">
+            Trusting others takes some time for you because you trust only those you know well, and you are careful about who you get to know.
+          </p>
         </div>
+
+        <div>
+          <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + LEARNER</p>
+          <p style="color:var(--muted);font-size:13px;line-height:1.6;">
+            You are open to new information and experiences, but you want adequate time to study them carefully and thoroughly.
+          </p>
+        </div>
+
+        <div>
+          <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + INTELLECTION</p>
+          <p style="color:var(--muted);font-size:13px;line-height:1.6;">
+            Your introspective reflection enhances your self-awareness. Your vigilant anticipation enhances your risk awareness.
+          </p>
+        </div>
+
+        <div>
+          <p style="color:#00B67A;font-weight:600;font-size:14px;margin-bottom:4px;">DELIBERATIVE + INPUT</p>
+          <p style="color:var(--muted);font-size:13px;line-height:1.6;">
+            You gather effective tools and valuable resources that can help manage risk and prevent problems.
+          </p>
+        </div>
+
       </div>
     </div>
   `;
   wrap.html(html);
 }
-
-// ===== Run =====
-const strengthsData2 = [
-  { rank: 1, domain: "RELATIONSHIP" },
-  { rank: 2, domain: "EXECUTING" },
-  { rank: 3, domain: "STRATEGIC" },
-  { rank: 4, domain: "STRATEGIC" },
-  { rank: 5, domain: "STRATEGIC" },
-  { rank: 6, domain: "EXECUTING" },
-  { rank: 7, domain: "EXECUTING" },
-  { rank: 8, domain: "EXECUTING" },
-  { rank: 9, domain: "RELATIONSHIP" },
-  { rank: 10, domain: "EXECUTING" }
-];
-renderDeliberativeBarcode(strengthsData2);
-renderDeliberativeDetails(strengthsData2);
+renderFull34BarcodeContained(strengths, 1);
+renderFull34BarcodeContained(strengths, 2);
 </script>
+
 
 
   <!-- Mobile modal popup -->
