@@ -1206,12 +1206,13 @@ function renderFull34BarcodeContained(data, highlightRank = 1, targetSelector = 
   const offsetX = (svgWidth - totalWidth) / 2;
   const rightStartX = offsetX + leftSpan + diagWidth;
 
-  // 🟢 CHANGED: draw inside the section that matches the highlightRank
+ // 🟢 CHANGED: draw inside the section that matches the highlightRank
   const sectionName = data.find(s => s.rank === highlightRank)?.name?.toLowerCase();
-  const targetSelector = sectionName ? `#${sectionName}Details` : '#fullBarcodeWrap';
-  const target = d3.select(targetSelector);
-  target.html(''); // clear old
-  const svg = target
+  const dynamicTargetSelector = sectionName ? `#${sectionName}Details` : '#fullBarcodeWrap';
+  const dynamicTarget = d3.select(dynamicTargetSelector);
+  dynamicTarget.html(''); // clear old
+
+  const svg = dynamicTarget
     .append('svg')
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     .attr('preserveAspectRatio','xMidYMid meet');
@@ -1691,6 +1692,13 @@ renderInputDetailsNoTabs(strengths);
     renderRelatorDetailsNoTabs(strengths);
   });
 </script>
+    <!-- Mobile modal popup -->
+<div id="mobileModal" class="mobile-modal">
+  <div class="mobile-modal-content">
+    <span class="close-btn">&times;</span>
+    <div id="mobileModalBody"></div>
+  </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   renderTiles(strengths);
@@ -1701,12 +1709,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-  <!-- Mobile modal popup -->
-<div id="mobileModal" class="mobile-modal">
-  <div class="mobile-modal-content">
-    <span class="close-btn">&times;</span>
-    <div id="mobileModalBody"></div>
-  </div>
-</div>
+
 </body>
 </html>
