@@ -495,34 +495,29 @@ html, body{ overflow-x: hidden; }
 
 <div class="center-wrap">
   <!-- RELATOR -->
-  <section id="relatorSection" class="talent-card relator-card">
-    <div class="barcode-wrap" id="relatorBarcode"></div>
-    <div class="details-wrap" id="relatorDetails"></div>
-  </section>
+<div id="relatorSection" class="relator-plain relator-card">
+  <div id="relatorBarcode"></div>
+  <div id="relatorDetails"></div>
+</div>
 
-  <!-- DELIBERATIVE -->
-  <section id="deliberativeSection" class="talent-card deliberative-card">
-    <div class="barcode-wrap" id="deliberativeBarcode"></div>
-    <div class="details-wrap" id="deliberativeDetails"></div>
-  </section>
+  <div id="deliberativeSection" class="relator-plain relator-card">
+  <div id="relatorBarcode"></div>
+  <div id="relatorDetails"></div>
+</div>
 
-  <!-- LEARNER -->
-  <section id="learnerSection" class="talent-card learner-card">
-    <div class="barcode-wrap" id="learnerBarcode"></div>
-    <div class="details-wrap" id="learnerDetails"></div>
-  </section>
+  <div id="learnerSection" class="relator-plain relator-card">
+  <div id="relatorBarcode"></div>
+  <div id="relatorDetails"></div>
+</div>
 
-  <!-- INTELLECTION -->
-  <section id="intellectionSection" class="talent-card intellection-card">
-    <div class="barcode-wrap" id="intellectionBarcode"></div>
-    <div class="details-wrap" id="intellectionDetails"></div>
-  </section>
+  <div id="intellectionSection" class="relator-plain relator-card">
+  <div id="relatorBarcode"></div>
+  <div id="relatorDetails"></div>
+</div>
 
-  <!-- INPUT -->
-  <section id="inputSection" class="talent-card input-card">
-    <div class="barcode-wrap" id="inputBarcode"></div>
-    <div class="details-wrap" id="inputDetails"></div>
-  </section>
+  <div id="inputSection" class="relator-plain relator-card">
+  <div id="relatorBarcode"></div>
+  <div id="relatorDetails"></div>
 </div>
 
 
@@ -1210,13 +1205,16 @@ function renderFull34BarcodeContained(data, highlightRank = 1, targetSelector = 
  // 🟢 CHANGED: draw inside the section that matches the highlightRank
   const sectionName = data.find(s => s.rank === highlightRank)?.name?.toLowerCase();
   const dynamicTargetSelector = sectionName ? `#${sectionName}Details` : '#fullBarcodeWrap';
-  const dynamicTarget = d3.select(dynamicTargetSelector);
-  dynamicTarget.html(''); // clear old
+const dynamicTarget = d3.select(dynamicTargetSelector);
+dynamicTarget.select('svg.barcode-svg').remove(); // only remove previous barcode
 
-  const svg = dynamicTarget
-    .append('svg')
-    .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-    .attr('preserveAspectRatio','xMidYMid meet');
+
+const svg = dynamicTarget
+  .append('svg')
+  .attr('class', 'barcode-svg')
+  .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
+  .attr('preserveAspectRatio', 'xMidYMid meet');
+;
 
   // left rails
   svg.append('line')
@@ -1669,17 +1667,6 @@ renderFull34BarcodeContained(strengths, 5, '#inputBarcode');
   wrap.html(html);
 }
 
-  
-
-// 3) Call sequence after strengths is ready:
-renderFull34BarcodeContained(strengths, 1); // Relator view first
-renderRelatorDetailsNoTabs(strengths);
-renderDeliberativeDetailsNoTabs(strengths); // draws purple + details
-renderLearnerDetailsNoTabs(strengths);
-renderIntellectionDetailsNoTabs(strengths);
-renderInputDetailsNoTabs(strengths);
-
-</script>
   <script>
   // Ensure D3 and strengths are available
   document.addEventListener('DOMContentLoaded', function () {
@@ -1701,25 +1688,26 @@ renderInputDetailsNoTabs(strengths);
   </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+  // Top section: grid + stackbar + compact split bar
   renderTiles(strengths);
   renderCliftonSVGBar(strengths);
+  renderStackBar(strengths);
 
-  // keep your details functions
+  // ===== Full DNA bars for each section =====
+  renderFull34BarcodeContained(strengths, 1, '#relatorBarcode');
+  renderFull34BarcodeContained(strengths, 2, '#deliberativeBarcode');
+  renderFull34BarcodeContained(strengths, 3, '#learnerBarcode');
+  renderFull34BarcodeContained(strengths, 4, '#intellectionBarcode');
+  renderFull34BarcodeContained(strengths, 5, '#inputBarcode');
+
+  // ===== Section details =====
   renderRelatorDetailsNoTabs(strengths);
   renderDeliberativeDetailsNoTabs(strengths);
   renderLearnerDetailsNoTabs(strengths);
-
-  // 🧬 render DNA barcodes inside their placeholders
-  renderFull34BarcodeContained(strengths, 1, '#relatorBarcode');
-  renderFull34BarcodeContained(strengths, 1, '#deliberativeBarcode');
-  renderFull34BarcodeContained(strengths, 1, '#learnerBarcode');
-  renderFull34BarcodeContained(strengths, 1, '#intellectionBarcode');
-  renderFull34BarcodeContained(strengths, 1, '#inputBarcode');
+  renderIntellectionDetailsNoTabs(strengths);
+  renderInputDetailsNoTabs(strengths);
 });
-
 </script>
-
-
 </body>
 </html>
