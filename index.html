@@ -1661,18 +1661,17 @@ practical and useful.
 }
 
 
-  function renderInputDetailsNoTabs(strengths){
-  // Find Input safely even if casing/spacing varies
+function renderInputDetailsNoTabs(strengths){
   const input = strengths.find(s => (s.name || '').toLowerCase().trim() === 'input');
   if(!input) return;
 
-  // Reuse the same DNA; highlight rank 5 (Input)
-  // Requires renderFull34BarcodeContained(data, highlightRank)
-renderFull34BarcodeContained(strengths, 5, 'inputBarcode');
+  // keeps your barcode (this is fine)
+  renderFull34BarcodeContained(strengths, 5, 'inputBarcode');
 
-  // Strategic Thinking accent (green)
   const domColor = "#38d07a";
-  const wrap = d3.select('inputDetails');
+
+  // FIX: select by id
+  const wrap = d3.select('#inputDetails');
   if(!wrap.node()) return;
 
   const html = `
@@ -1789,6 +1788,8 @@ say, “Let’s get started right now!” many people refrain from questioning y
 
     // 3) Relator details (plain, centered)
     renderRelatorDetailsNoTabs(strengths);
+
+      renderInputDetailsNoTabs(strengths);
   });
 
 </script>
