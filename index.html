@@ -1703,9 +1703,18 @@ renderInputDetailsNoTabs(strengths);
 document.addEventListener('DOMContentLoaded', function() {
   renderTiles(strengths);
   renderCliftonSVGBar(strengths);
+
+  // existing detail renderers
   renderRelatorDetailsNoTabs(strengths);
   renderDeliberativeDetailsNoTabs(strengths);
   renderLearnerDetailsNoTabs(strengths);
+
+  // 🧬 render DNA barcodes above each section
+  renderFull34BarcodeContained(strengths, 1, '#relatorDetails');
+  renderFull34BarcodeContained(strengths, 1, '#deliberativeDetails');
+  renderFull34BarcodeContained(strengths, 1, '#learnerDetails');
+  renderFull34BarcodeContained(strengths, 1, '#intellectionDetails');
+  renderFull34BarcodeContained(strengths, 1, '#inputDetails');
 });
 </script>
 
