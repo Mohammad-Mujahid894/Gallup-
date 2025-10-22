@@ -1289,7 +1289,7 @@ function renderRelatorDetailsNoTabs(strengths){
 
 
 // 1) Make your barcode function accept a highlight rank (default 1)
-function renderFull34BarcodeContained(data, highlightRank = 1){
+function renderFull34BarcodeContained(data, highlightRank = 1) {
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
@@ -1315,8 +1315,12 @@ function renderFull34BarcodeContained(data, highlightRank = 1){
   const offsetX = (svgWidth - totalWidth) / 2;
   const rightStartX = offsetX + leftSpan + diagWidth;
 
-  d3.select('#fullBarcodeWrap').html('');
-  const svg = d3.select('#fullBarcodeWrap')
+  // 🟢 CHANGED: draw inside the section that matches the highlightRank
+  const sectionName = data.find(s => s.rank === highlightRank)?.name?.toLowerCase();
+  const targetSelector = sectionName ? `#${sectionName}Details` : '#fullBarcodeWrap';
+  const target = d3.select(targetSelector);
+  target.html(''); // clear old
+  const svg = target
     .append('svg')
     .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
     .attr('preserveAspectRatio','xMidYMid meet');
@@ -1331,7 +1335,7 @@ function renderFull34BarcodeContained(data, highlightRank = 1){
     .attr('x2', offsetX + leftSpan).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
-  // left bars with dynamic highlight
+  // left bars (highlight)
   const gLeft = svg.append('g').attr('transform',`translate(${offsetX},${barTop})`);
   gLeft.selectAll('rect')
     .data(leftBars)
@@ -1342,24 +1346,13 @@ function renderFull34BarcodeContained(data, highlightRank = 1){
     .attr('width', barWidth)
     .attr('height', barHeight)
     .attr('rx', 2)
-    .attr('fill', d => d.rank === highlightRank
-      ? (domainColors[d.domain] || (highlightRank===2 ? '#8b61ff' : '#3aa0ff'))
-      : '#778199')
-    .attr('data-rank', d => d.rank)
-    .style('cursor','pointer')
-    .on('mouseover', (e,d)=> barHoverOnly && barHoverOnly(d))
-    .on('mouseout', ()=> clearAllHighlights && clearAllHighlights())
-    .on('click', (e,d)=> tileClick && tileClick(e,d));
+    .attr('fill', d => d.rank === highlightRank ? (domainColors[d.domain] || grey) : grey);
 
   // diagonal X
   const diagStart = offsetX + leftSpan;
-  svg.append('line')
-    .attr('x1', diagStart).attr('y1', topY)
-    .attr('x2', diagStart + diagWidth).attr('y2', svgHeight - topY)
+  svg.append('line').attr('x1', diagStart).attr('y1', topY).attr('x2', diagStart + diagWidth).attr('y2', svgHeight - topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
-  svg.append('line')
-    .attr('x1', diagStart).attr('y1', svgHeight - topY)
-    .attr('x2', diagStart + diagWidth).attr('y2', topY)
+  svg.append('line').attr('x1', diagStart).attr('y1', svgHeight - topY).attr('x2', diagStart + diagWidth).attr('y2', topY)
     .attr('stroke', rail).attr('stroke-width',6).attr('stroke-linecap','round');
 
   // right rails
@@ -1383,13 +1376,9 @@ function renderFull34BarcodeContained(data, highlightRank = 1){
     .attr('width', barWidth)
     .attr('height', barHeight)
     .attr('rx', 2)
-    .attr('fill', '#778199')
-    .attr('data-rank', d => d.rank)
-    .style('cursor','pointer')
-    .on('mouseover', (e,d)=> barHoverOnly && barHoverOnly(d))
-    .on('mouseout', ()=> clearAllHighlights && clearAllHighlights())
-    .on('click', (e,d)=> tileClick && tileClick(e,d));
+    .attr('fill', grey);
 }
+
 
 // 2) The Deliberative card render (no early return on rank)
 function renderDeliberativeDetailsNoTabs(strengths){
