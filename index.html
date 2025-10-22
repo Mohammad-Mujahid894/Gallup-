@@ -741,7 +741,6 @@ function renderTiles(data){
 
 /* initial render */
 renderTiles(strengths);
-  renderCliftonSVGBar(strengths);
 
 
 /* TOOLTIP elements */
@@ -1195,7 +1194,6 @@ function renderFull34BarcodeContained(data, highlightRank = 1, targetSelector = 
   const grey = "#778199";
   const rail = "#bfbfbf";
 
-  const svgWidth = 640, svgHeight = 70;
   const topY = 12, railThickness = 6, barWidth = 8, spacing = 12, innerGap = 3;
   const barTop = topY + railThickness / 2 + innerGap;
   const barHeight = svgHeight - (topY + railThickness / 2 + innerGap) * 2;
@@ -1696,7 +1694,15 @@ renderInputDetailsNoTabs(strengths);
     renderRelatorDetailsNoTabs(strengths);
   });
 </script>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  renderTiles(strengths);
+  renderCliftonSVGBar(strengths);
+  renderRelatorDetailsNoTabs(strengths);
+  renderDeliberativeDetailsNoTabs(strengths);
+  renderLearnerDetailsNoTabs(strengths);
+});
+</script>
 
   <!-- Mobile modal popup -->
 <div id="mobileModal" class="mobile-modal">
