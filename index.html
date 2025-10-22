@@ -495,35 +495,36 @@ html, body{ overflow-x: hidden; }
 
 <div class="center-wrap">
   <!-- RELATOR -->
-  <div id="relatorSection" class="relator-plain relator-card">
-    <div id="fullBarcodeWrap"></div>
-    <div id="relatorDetails"></div>
-  </div>
+  <section id="relatorSection" class="talent-card relator-card">
+    <div class="barcode-wrap" id="relatorBarcode"></div>
+    <div class="details-wrap" id="relatorDetails"></div>
+  </section>
 
   <!-- DELIBERATIVE -->
-  <div id="deliberativeSection" class="relator-plain relator-card">
-    <div id="deliberativeBarcode"></div>
-    <div id="deliberativeDetails"></div>
-  </div>
+  <section id="deliberativeSection" class="talent-card deliberative-card">
+    <div class="barcode-wrap" id="deliberativeBarcode"></div>
+    <div class="details-wrap" id="deliberativeDetails"></div>
+  </section>
 
   <!-- LEARNER -->
-  <div id="learnerSection" class="relator-plain relator-card">
-    <div id="learnerBarcode"></div>
-    <div id="learnerDetails"></div>
-  </div>
+  <section id="learnerSection" class="talent-card learner-card">
+    <div class="barcode-wrap" id="learnerBarcode"></div>
+    <div class="details-wrap" id="learnerDetails"></div>
+  </section>
 
   <!-- INTELLECTION -->
-  <div id="intellectionSection" class="relator-plain relator-card">
-    <div id="intellectionBarcode"></div>
-    <div id="intellectionDetails"></div>
-  </div>
+  <section id="intellectionSection" class="talent-card intellection-card">
+    <div class="barcode-wrap" id="intellectionBarcode"></div>
+    <div class="details-wrap" id="intellectionDetails"></div>
+  </section>
 
   <!-- INPUT -->
-  <div id="inputSection" class="relator-plain relator-card">
-    <div id="inputBarcode"></div>
-    <div id="inputDetails"></div>
-  </div>
+  <section id="inputSection" class="talent-card input-card">
+    <div class="barcode-wrap" id="inputBarcode"></div>
+    <div class="details-wrap" id="inputDetails"></div>
+  </section>
 </div>
+
 
   
     <script>
@@ -1704,18 +1705,19 @@ document.addEventListener('DOMContentLoaded', function() {
   renderTiles(strengths);
   renderCliftonSVGBar(strengths);
 
-  // existing detail renderers
+  // keep your details functions
   renderRelatorDetailsNoTabs(strengths);
   renderDeliberativeDetailsNoTabs(strengths);
   renderLearnerDetailsNoTabs(strengths);
 
-  // 🧬 render DNA barcodes above each section
-  renderFull34BarcodeContained(strengths, 1, '#relatorDetails');
-  renderFull34BarcodeContained(strengths, 1, '#deliberativeDetails');
-  renderFull34BarcodeContained(strengths, 1, '#learnerDetails');
-  renderFull34BarcodeContained(strengths, 1, '#intellectionDetails');
-  renderFull34BarcodeContained(strengths, 1, '#inputDetails');
+  // 🧬 render DNA barcodes inside their placeholders
+  renderFull34BarcodeContained(strengths, 1, '#relatorBarcode');
+  renderFull34BarcodeContained(strengths, 1, '#deliberativeBarcode');
+  renderFull34BarcodeContained(strengths, 1, '#learnerBarcode');
+  renderFull34BarcodeContained(strengths, 1, '#intellectionBarcode');
+  renderFull34BarcodeContained(strengths, 1, '#inputBarcode');
 });
+
 </script>
 
 
