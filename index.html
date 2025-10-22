@@ -494,22 +494,37 @@ html, body{ overflow-x: hidden; }
 
 
 <div class="center-wrap">
-  <!-- Full 34-bar DNA (contained, with diagonal cut) -->
-  <div id="fullBarcodeWrap"></div>
-
-  <!-- Relator details (plain, centered) -->
-  <div id="relatorDetails" class="relator-plain relator-card"></div>
-
-
-<div id="deliberativeDetails" class="relator-plain relator-card"></div>
-
-  <div id="learnerDetails" class="relator-plain relator-card"></div>
-
-  <div id="intellectionDetails" class="relator-plain relator-card"></div>
-
-  <div id="inputDetails" class="relator-plain relator-card"></div>
-
+  <!-- RELATOR -->
+  <div id="relatorSection" class="relator-plain relator-card">
+    <div id="fullBarcodeWrap"></div>
+    <div id="relatorDetails"></div>
   </div>
+
+  <!-- DELIBERATIVE -->
+  <div id="deliberativeSection" class="relator-plain relator-card">
+    <div id="deliberativeBarcode"></div>
+    <div id="deliberativeDetails"></div>
+  </div>
+
+  <!-- LEARNER -->
+  <div id="learnerSection" class="relator-plain relator-card">
+    <div id="learnerBarcode"></div>
+    <div id="learnerDetails"></div>
+  </div>
+
+  <!-- INTELLECTION -->
+  <div id="intellectionSection" class="relator-plain relator-card">
+    <div id="intellectionBarcode"></div>
+    <div id="intellectionDetails"></div>
+  </div>
+
+  <!-- INPUT -->
+  <div id="inputSection" class="relator-plain relator-card">
+    <div id="inputBarcode"></div>
+    <div id="inputDetails"></div>
+  </div>
+</div>
+
   
     <script>
     /* ========= Parallax starfields (3 layers for depth) ========= */
@@ -1289,7 +1304,12 @@ function renderRelatorDetailsNoTabs(strengths){
 
 
 // 1) Make your barcode function accept a highlight rank (default 1)
-function renderFull34BarcodeContained(data, highlightRank = 1) {
+function renderFull34BarcodeContained(data, highlightRank = 1, targetSelector = '#fullBarcodeWrap'){
+  const target = d3.select(targetSelector);
+  target.html('');
+  const svgWidth = 640, svgHeight = 70;
+
+  // your existing code follows here...
   const domainColors = {
     EXECUTING: "#8b61ff",
     INFLUENCING: "#ff9b3f",
@@ -1386,7 +1406,7 @@ function renderDeliberativeDetailsNoTabs(strengths){
   if(!delib) return;
 
   // draw barcode with Deliberative highlight
-  renderFull34BarcodeContained(strengths, 2);
+renderFull34BarcodeContained(strengths, 2, '#deliberativeBarcode');
 
   // mount content
   const domColor = "#8b61ff";
@@ -1464,7 +1484,7 @@ function renderDeliberativeDetailsNoTabs(strengths){
 
   // Reuse the same DNA, highlighting rank 3 (Learner)
   // Requires your renderFull34BarcodeContained(data, highlightRank) version
-  renderFull34BarcodeContained(strengths, 3);
+renderFull34BarcodeContained(strengths, 3, '#learnerBarcode');
 
   // Accent color = Strategic Thinking domain
   const domColor = "#38d07a";
@@ -1573,8 +1593,7 @@ function renderDeliberativeDetailsNoTabs(strengths){
 
   // reuse the same DNA, highlighting rank 4 (Intellection)
   // requires your renderFull34BarcodeContained(data, highlightRank) version
-  renderFull34BarcodeContained(strengths, 4);
-
+renderFull34BarcodeContained(strengths, 4, '#intellectionBarcode');
   // Strategic Thinking accent (green)
   const domColor = "#38d07a";
   const wrap = d3.select('#intellectionDetails');
@@ -1679,7 +1698,7 @@ function renderDeliberativeDetailsNoTabs(strengths){
 
   // Reuse the same DNA; highlight rank 5 (Input)
   // Requires renderFull34BarcodeContained(data, highlightRank)
-  renderFull34BarcodeContained(strengths, 5);
+renderFull34BarcodeContained(strengths, 5, '#inputBarcode');
 
   // Strategic Thinking accent (green)
   const domColor = "#38d07a";
