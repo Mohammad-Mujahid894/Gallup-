@@ -495,30 +495,31 @@ html, body{ overflow-x: hidden; }
 
 <div class="center-wrap">
   <!-- RELATOR -->
-<div id="relatorSection" class="relator-plain relator-card">
-  <div id="relatorBarcode"></div>
-  <div id="relatorDetails"></div>
+  <div id="relatorSection" class="relator-plain relator-card">
+  <div id="relatorBarcode" class="barcode-wrap"></div>
+  <div id="relatorDetails" class="details-wrap"></div>
 </div>
 
-  <div id="deliberativeSection" class="relator-plain relator-card">
-  <div id="relatorBarcode"></div>
-  <div id="relatorDetails"></div>
+<div id="deliberativeSection" class="relator-plain relator-card">
+  <div id="deliberativeBarcode" class="barcode-wrap"></div>
+  <div id="deliberativeDetails" class="details-wrap"></div>
 </div>
 
-  <div id="learnerSection" class="relator-plain relator-card">
-  <div id="relatorBarcode"></div>
-  <div id="relatorDetails"></div>
+<div id="learnerSection" class="relator-plain relator-card">
+  <div id="learnerBarcode" class="barcode-wrap"></div>
+  <div id="learnerDetails" class="details-wrap"></div>
 </div>
 
-  <div id="intellectionSection" class="relator-plain relator-card">
-  <div id="relatorBarcode"></div>
-  <div id="relatorDetails"></div>
+<div id="intellectionSection" class="relator-plain relator-card">
+  <div id="intellectionBarcode" class="barcode-wrap"></div>
+  <div id="intellectionDetails" class="details-wrap"></div>
 </div>
 
-  <div id="inputSection" class="relator-plain relator-card">
-  <div id="relatorBarcode"></div>
-  <div id="relatorDetails"></div>
+<div id="inputSection" class="relator-plain relator-card">
+  <div id="inputBarcode" class="barcode-wrap"></div>
+  <div id="inputDetails" class="details-wrap"></div>
 </div>
+
 
 
   
@@ -1666,8 +1667,6 @@ renderFull34BarcodeContained(strengths, 5, '#inputBarcode');
   `;
   wrap.html(html);
 }
-
-  <script>
   // Ensure D3 and strengths are available
   document.addEventListener('DOMContentLoaded', function () {
     // 1) Top split barcode (compact version)
